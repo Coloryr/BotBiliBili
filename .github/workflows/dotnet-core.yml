@@ -1,0 +1,24 @@
+name: .NET构建
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: 设置.NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.202
+    - name: 更新依赖
+      run: dotnet restore
+    - name: 构建
+      run: dotnet build
+    - name: 更新构建文件
+      uses: actions/upload-artifact@v2
+      with:
+        name: "BotBiliBili"
+        path: build_out
