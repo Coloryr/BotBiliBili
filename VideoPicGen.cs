@@ -88,9 +88,28 @@ namespace BotBiliBili
                 Config.QSize, Config.QSize);
 
             string temp = data["title"].ToString();
-            if (temp.Length > Config.TitleLim)
-                temp = temp.Substring(0, Config.TitleLim - 3) + "...";
-            graphics.DrawString(temp, title_font, title_color, Config.TitlePos.X, Config.TitlePos.Y);
+
+            string temp1;
+            int c = 0;
+            while (true)
+            {
+                int now = 0;
+                if (Config.TitleLim + c > temp.Length)
+                {
+                    temp1 = temp;
+                    break;
+                }
+                string temp2 = temp.Substring(now, Config.InfoLim + c);
+                SizeF size = graphics.MeasureString(temp2, info_font);
+                if (size.Width > Config.Width - Config.InfoLeft)
+                {
+                    temp1 = temp.Substring(now, Config.TitleLim + c - 2) + "...";
+                    break;
+                }
+                c++;
+            }
+
+            graphics.DrawString(temp1, title_font, title_color, Config.TitlePos.X, Config.TitlePos.Y);
 
             DateTime startTime = new(1970, 1, 1);
             DateTime dt = startTime.AddSeconds((long)data["pubdate"]);
@@ -131,7 +150,6 @@ namespace BotBiliBili
                     bool last = false;
                     float NowY = Config.InfoPos.Y + d * Config.InfoDeviation;
                     d++;
-                    string temp1;
                     int b = 0;
                     while (true)
                     {
