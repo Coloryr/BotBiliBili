@@ -104,7 +104,7 @@ namespace BotBiliBili
 
             temp = data["desc"].ToString();
 
-            int AllLength = ((temp.Length / Config.InfoLim + 1 + 
+            int AllLength = ((temp.Length / Config.InfoLim + 2 + 
                 Utils.SubstringCount(temp, "\n")) * Config.InfoDeviation) + (int)Config.InfoPos.Y;
             if (AllLength > bitmap.Height)
             {

@@ -52,7 +52,7 @@ namespace BotBiliBili
                 bili_jct = "",
                 Command = new()
                 { 
-                    Head = "/bili",
+                    Head = "#bili",
                     Video = "video"
                 },
                 VideoPic = new()
