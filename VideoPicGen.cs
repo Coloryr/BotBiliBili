@@ -93,9 +93,9 @@ namespace BotBiliBili
             graphics.DrawString(temp, title_font, title_color, Config.TitlePos.X, Config.TitlePos.Y);
 
             DateTime startTime = new(1970, 1, 1);
-            DateTime dt = startTime.AddMilliseconds((long)data["pubdate"]);
-            temp = dt.ToString("yyyy/MM/dd HH:mm:ss:ffff");
-            graphics.DrawString($"{temp} 预览:{data["stat"]["view"]} 点赞:{data["stat"]["like"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
+            DateTime dt = startTime.AddSeconds((long)data["pubdate"]);
+            temp = dt.ToString("yyyy/MM/dd HH:mm:ss");
+            graphics.DrawString($"{temp}  观看:{data["stat"]["view"]}  点赞:{data["stat"]["like"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
 
             pic_url = data["pic"].ToString();
             using Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;

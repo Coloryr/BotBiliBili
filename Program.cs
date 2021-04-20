@@ -141,7 +141,8 @@ namespace BotBiliBili
                                 SendGroupMessage("错误的参数", pack.id);
                                 break;
                             }
-                            if (temp[2].StartsWith("AV"))
+                            string comm = temp[2].ToLower();
+                            if (comm.StartsWith("av"))
                             {
                                 Task.Run(() =>
                                 {
@@ -150,7 +151,7 @@ namespace BotBiliBili
                                     SendGroupImage(temp1, pack.id);
                                 });
                             }
-                            else if (temp[2].StartsWith("BV"))
+                            else if (comm.StartsWith("bv"))
                             {
                                 Task.Run(() =>
                                 {
