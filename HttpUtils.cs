@@ -62,7 +62,7 @@ namespace BotBiliBili
 
         public static JObject GetVideoA(string aid)
         {
-            string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid}";
+            string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid.ToLower().Replace("av", "")}";
             var data = Get(url);
             JObject obj = JObject.Parse(data);
             if (obj["code"].ToString() != "0")

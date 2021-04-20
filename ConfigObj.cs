@@ -74,5 +74,6 @@ namespace BotBiliBili
         public string InfoColor { get; set; }
         public int InfoLim { get; set; }
         public int InfoDeviation { get; set; }
+        public int InfoLeft { get; set; }
     }
 }

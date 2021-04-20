@@ -120,27 +120,41 @@ namespace BotBiliBili
                 bitmap = bitmap1;
             }
 
-            string[] temp2 = temp.Split("\n");
+            string[] list = temp.Split("\n");
             int d = 0;
-            foreach (var item in temp2)
+            foreach (var item in list)
             {
                 int a = 0;
+                int now = 0;
                 while (true)
                 {
+                    bool last = false;
                     float NowY = Config.InfoPos.Y + d * Config.InfoDeviation;
                     d++;
-                    if (item.Length - a * Config.InfoLim < Config.InfoLim)
+                    string temp1;
+                    int b = 0;
+                    while (true)
                     {
-                        string temp1 = item[(a * Config.InfoLim)..];
-                        graphics.DrawString(temp1, info_font, info_color, Config.InfoPos.X, NowY);
-                        break;
+                        if (now + Config.InfoLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.InfoLim + b);
+                        SizeF size = graphics.MeasureString(temp2, info_font);
+                        if (size.Width > Config.Width - Config.InfoLeft)
+                        {
+                            temp1 = item.Substring(now, Config.InfoLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
                     }
-                    else
-                    {
-                        string temp1 = item.Substring(a * Config.InfoLim, Config.InfoLim);
-                        graphics.DrawString(temp1, info_font, info_color, Config.InfoPos.X, NowY);
-                    }
+                    graphics.DrawString(temp1, info_font, info_color, Config.InfoPos.X, NowY);
                     a++;
+                    if (last)
+                        break;
                 }
             }
 
