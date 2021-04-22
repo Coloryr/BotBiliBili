@@ -1,15 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using BotBiliBili.Config;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BotBiliBili
+namespace BotBiliBili.Utils
 {
     class HttpUtils
     {
@@ -23,9 +19,9 @@ namespace BotBiliBili
                 client.Dispose();
             }
             Cookie = new();
-            Cookie.Add(new Cookie("SESSDATA", 
-                ConfigUtils.Config.SESSDATA ?? "","/" ,".bilibili.com"));
-            Cookie.Add(new Cookie("bili_jct", 
+            Cookie.Add(new Cookie("SESSDATA",
+                ConfigUtils.Config.SESSDATA ?? "", "/", ".bilibili.com"));
+            Cookie.Add(new Cookie("bili_jct",
                 ConfigUtils.Config.bili_jct ?? "", "/", ".bilibili.com"));
             HttpClientHandler = new()
             {

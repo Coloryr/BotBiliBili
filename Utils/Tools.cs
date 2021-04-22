@@ -1,10 +1,9 @@
-﻿using System.Drawing.Imaging;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace BotBiliBili
+namespace BotBiliBili.Utils
 {
-    class Utils
+    class Tools
     {
         public static Bitmap ZoomImage(Bitmap bitmap, int destHeight, int destWidth)
         {
@@ -16,15 +15,15 @@ namespace BotBiliBili
                 int sourHeight = bitmap.Height;
                 if (sourHeight > destHeight || sourWidth > destWidth)
                 {
-                    if ((sourWidth * destHeight) > (sourHeight * destWidth))
+                    if (sourWidth * destHeight > sourHeight * destWidth)
                     {
                         width = destWidth;
-                        height = (destWidth * sourHeight) / sourWidth;
+                        height = destWidth * sourHeight / sourWidth;
                     }
                     else
                     {
                         height = destHeight;
-                        width = (sourWidth * destHeight) / sourHeight;
+                        width = sourWidth * destHeight / sourHeight;
                     }
                 }
                 else

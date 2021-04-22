@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using BotBiliBili.Config;
+using BotBiliBili.PicGen;
+using BotBiliBili.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -144,6 +147,7 @@ namespace BotBiliBili
                             string comm = temp[2].ToLower();
                             if (comm.StartsWith("av"))
                             {
+                                Log($"正在生成视频:{comm}的图片");
                                 Task.Run(() =>
                                 {
                                     var data1 = HttpUtils.GetVideoA(temp[2]);
@@ -153,6 +157,7 @@ namespace BotBiliBili
                             }
                             else if (comm.StartsWith("bv"))
                             {
+                                Log($"正在生成视频:{comm}的图片");
                                 Task.Run(() =>
                                 {
                                     var data1 = HttpUtils.GetVideoB(temp[2]);
@@ -166,7 +171,7 @@ namespace BotBiliBili
                             }
                         }
                     }
-                    
+
                     break;
             }
         }

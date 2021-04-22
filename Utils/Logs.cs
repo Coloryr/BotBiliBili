@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BotBiliBili
+namespace BotBiliBili.Utils
 {
     public class Logs
     {

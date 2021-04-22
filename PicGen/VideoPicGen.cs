@@ -1,15 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using BotBiliBili.Config;
+using BotBiliBili.Utils;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BotBiliBili
+namespace BotBiliBili.PicGen
 {
     class VideoPicGen
     {
@@ -118,13 +116,13 @@ namespace BotBiliBili
 
             pic_url = data["pic"].ToString();
             using Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
-            graphics.DrawImage(Utils.ZoomImage(pic1, Config.PicWidth,
+            graphics.DrawImage(Tools.ZoomImage(pic1, Config.PicWidth,
                 Config.PicHeight), Config.PicPos.X, Config.PicPos.Y);
 
             temp = data["desc"].ToString();
 
-            int AllLength = ((temp.Length / Config.InfoLim + 2 + 
-                Utils.SubstringCount(temp, "\n")) * Config.InfoDeviation) + (int)Config.InfoPos.Y;
+            int AllLength = (temp.Length / Config.InfoLim + 2 +
+                Tools.SubstringCount(temp, "\n")) * Config.InfoDeviation + (int)Config.InfoPos.Y;
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);

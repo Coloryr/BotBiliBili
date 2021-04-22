@@ -1,12 +1,7 @@
 ﻿using QRCoder;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BotBiliBili
+namespace BotBiliBili.Utils
 {
     class CQode
     {

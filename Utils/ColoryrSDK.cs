@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 //请用net5运行
 //并安装Newtonsoft.Json
-namespace BotBiliBili
+namespace BotBiliBili.Utils
 {
     /// <summary>
     /// 55 [插件]获取群列表

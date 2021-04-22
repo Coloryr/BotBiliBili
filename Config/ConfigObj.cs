@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace BotBiliBili
+namespace BotBiliBili.Config
 {
     public class ConfigObj
     {
@@ -19,7 +14,7 @@ namespace BotBiliBili
         public VideoSave VideoPic { get; set; }
     }
     public class CommandObj
-    { 
+    {
         public string Head { get; set; }
         public string Video { get; set; }
     }
@@ -50,7 +45,7 @@ namespace BotBiliBili
     }
 
     public class VideoSave : PicSave
-    { 
+    {
         public Pos HeadPic { get; set; }
         public float HeadPicSize { get; set; }
         public Pos NamePos { get; set; }

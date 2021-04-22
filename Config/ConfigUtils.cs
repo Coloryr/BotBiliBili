@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace BotBiliBili
+namespace BotBiliBili.Config
 {
     class ConfigUtils
     {
@@ -51,7 +51,7 @@ namespace BotBiliBili
                 SESSDATA = "",
                 bili_jct = "",
                 Command = new()
-                { 
+                {
                     Head = "#bili",
                     Video = "video"
                 },
@@ -61,7 +61,7 @@ namespace BotBiliBili
                     QBack = "#F8F8FF",
                     QPoint = "#0000CD",
                     QPos = new()
-                    { 
+                    {
                         X = 460,
                         Y = 20
                     },
@@ -90,7 +90,7 @@ namespace BotBiliBili
                     UidSize = 15,
                     UidColor = "#363636",
                     TitlePos = new()
-                    { 
+                    {
                         X = 20,
                         Y = 155
                     },
