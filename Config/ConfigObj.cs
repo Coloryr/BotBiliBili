@@ -60,6 +60,13 @@ namespace BotBiliBili.Config
         public Pos PicStart { get; set; }
         public int PicWidth { get; set; }
         public int PicPid { get; set; }
+        public int TextX { get; set; }
+        public int TextPid { get; set; }
+        public int TextSize { get; set; }
+        public int TextLim { get; set; }
+        public int TextDeviation { get; set; }
+        public int TextLeft { get; set; }
+        public string TextColor { get; set; }
     }
 
     public class VideoSave : PicSave

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text.RegularExpressions;
 
 namespace BotBiliBili.Utils
 {
@@ -31,7 +32,7 @@ namespace BotBiliBili.Utils
                     width = sourWidth;
                     height = sourHeight;
                 }
-                Bitmap destBitmap = new(destWidth, destHeight);
+                Bitmap destBitmap = new(width, height);
                 Graphics g = Graphics.FromImage(destBitmap);
                 g.Clear(Color.Transparent);
                 //设置画布的描绘质量           
@@ -57,6 +58,10 @@ namespace BotBiliBili.Utils
                 index += data.Length;
             }
             return count;
+        }
+        public static bool IsNumeric(string value)
+        {
+            return Regex.IsMatch(value, @"^[+-]?/d*[.]?/d*$");
         }
     }
 }

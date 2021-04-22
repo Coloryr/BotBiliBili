@@ -163,7 +163,13 @@ namespace BotBiliBili
                                 Task.Run(() =>
                                 {
                                     var data1 = HttpUtils.GetVideoA(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到视频：{comm}", pack.id);
+                                        return;
+                                    }
                                     string temp1 = VideoPicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
                                     SendGroupImage(temp1, pack.id);
                                 });
                             }
@@ -173,13 +179,49 @@ namespace BotBiliBili
                                 Task.Run(() =>
                                 {
                                     var data1 = HttpUtils.GetVideoB(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到视频：{comm}", pack.id);
+                                        return;
+                                    }
                                     string temp1 = VideoPicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
                                     SendGroupImage(temp1, pack.id);
                                 });
                             }
                             else
                             {
                                 SendGroupMessage("错误的视频号", pack.id);
+                            }
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.Dynamic)
+                        {
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (!Tools.IsNumeric(comm))
+                            {
+                                Log($"正在生成动态:{comm}的图片");
+                                Task.Run(() =>
+                                {
+                                    var data1 = HttpUtils.GetDynamic(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到动态：{comm}", pack.id);
+                                        return;
+                                    }
+                                    string temp1 = DynamicPicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
+                                    SendGroupImage(temp1, pack.id);
+                                });
+                            }
+                            else
+                            {
+                                SendGroupMessage("错误的动态号", pack.id);
+                                break;
                             }
                         }
                     }

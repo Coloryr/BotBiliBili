@@ -19,9 +19,11 @@ namespace BotBiliBili.PicGen
         private static Brush name_color;
         private static Brush uid_color;
         private static Brush state_color;
+        private static Brush text_color;
         private static Font name_font;
         private static Font uid_font;
         private static Font state_font;
+        private static Font text_font;
         private static Color Qback;
         private static Color Qpoint;
         private static DynamicSave Config;
@@ -34,15 +36,19 @@ namespace BotBiliBili.PicGen
             name_color?.Dispose();
             uid_color?.Dispose();
             state_color?.Dispose();
+            text_color?.Dispose();
             name_font?.Dispose();
             uid_font?.Dispose();
             state_font?.Dispose();
+            text_font?.Dispose();
             name_color = new SolidBrush(ColorTranslator.FromHtml(Config.NameColor));
             uid_color = new SolidBrush(ColorTranslator.FromHtml(Config.UidColor));
             state_color = new SolidBrush(ColorTranslator.FromHtml(Config.StateColor));
+            text_color = new SolidBrush(ColorTranslator.FromHtml(Config.TextColor));
             name_font = new(Config.Font, Config.NameSize, FontStyle.Regular);
             uid_font = new(Config.Font, Config.UidSize, FontStyle.Regular);
             state_font = new(Config.Font, Config.StateSize, FontStyle.Regular);
+            text_font = new(Config.Font, Config.TextSize, FontStyle.Regular);
             Qback = ColorTranslator.FromHtml(Config.QBack);
             Qpoint = ColorTranslator.FromHtml(Config.QPoint);
         }
@@ -85,26 +91,86 @@ namespace BotBiliBili.PicGen
             graphics.DrawString($"{temp}  观看:{data["desc"]["view"]}  点赞:{data["desc"]["like"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
 
             JArray array = data1["item"]["pictures"] as JArray;
-            int x = 0, y = 0;
             float xPos = Config.PicStart.X, yPos = Config.PicStart.Y;
-            for (int a = 0; a < array.Count;)
+            for (int a = 0; a < array.Count; a++)
             {
-                if ((array.Count - a) % 2 == 0)
+                string pic_url1 = array[a]["img_src"].ToString();
+                Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url1)) as Bitmap;
+                pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
+                if (yPos + pic1.Height  > bitmap.Height)
                 {
-                    string pic_url1 = array[a]["img_src"].ToString();
-                    string pic_url2 = array[a + 1]["img_src"].ToString();
-                    pic_url = data1["user"]["head_url"].ToString();
-                    Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
-                    pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
-                    graphics.DrawImage(pic1, 0,
-                       0, pic1.Width, pic1.Height);
-                    pic1.Dispose();
-                    a += 2;
-                    break;
+                    graphics.Save();
+                    Bitmap bitmap1 = new(Config.Width, (int)(yPos + pic1.Height));
+                    graphics = Graphics.FromImage(bitmap1);
+                    graphics.InterpolationMode = InterpolationMode.High;
+                    graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                    graphics.Clear(back);
+                    graphics.DrawImage(bitmap, 0, 0);
+                    bitmap.Dispose();
+                    bitmap = bitmap1;
                 }
-                else
-                {
+                graphics.DrawImage(pic1, xPos,
+                   yPos, pic1.Width, pic1.Height);
+                yPos += pic1.Height + Config.PicPid;
+                
+                pic1.Dispose();
+            }
 
+            yPos += Config.TextPid;
+
+            temp = data1["item"]["description"].ToString();
+
+            int AllLength = (temp.Length / Config.TextLim + 2 +
+                Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
+            if (AllLength > bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, AllLength);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+
+            string temp1;
+            string[] list = temp.Split("\n");
+            int d = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    float NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                        break;
                 }
             }
 

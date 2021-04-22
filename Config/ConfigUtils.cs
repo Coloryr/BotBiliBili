@@ -173,10 +173,14 @@ namespace BotBiliBili.Config
                 PicStart = new()
                 {
                     X = 20,
-                    Y = 20
+                    Y = 180
                 },
-                PicWidth = 270,
-                PicPid = 10
+                PicWidth = 560,
+                PicPid = 10,
+                TextX = 20,
+                TextPid = 20,
+                TextSize = 20,
+                TextColor = "#000000"
             }, Program.RunLocal + "dynamic.json");
         }
     }
