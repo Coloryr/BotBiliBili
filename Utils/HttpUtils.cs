@@ -1,5 +1,6 @@
 ﻿using BotBiliBili.Config;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -27,7 +28,10 @@ namespace BotBiliBili.Utils
             {
                 CookieContainer = Cookie,
             };
-            client = new HttpClient(HttpClientHandler);
+            client = new HttpClient(HttpClientHandler)
+            {
+                Timeout = TimeSpan.FromSeconds(5)
+            };
             client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42");
         }
 
@@ -58,41 +62,65 @@ namespace BotBiliBili.Utils
 
         public static JObject GetVideoA(string aid)
         {
-            string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid.ToLower().Replace("av", "")}";
-            var data = Get(url);
-            JObject obj = JObject.Parse(data);
-            if (obj["code"].ToString() != "0")
+            try
             {
-                Program.Error($"获取视频信息失败:{obj["message"]}");
+                string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid.ToLower().Replace("av", "")}";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"获取视频信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
                 return null;
             }
-            return obj;
         }
 
         public static JObject GetVideoB(string bid)
         {
-            string url = $"https://api.bilibili.com/x/web-interface/view?bvid={bid}";
-            var data = Get(url);
-            JObject obj = JObject.Parse(data);
-            if (obj["code"].ToString() != "0")
+            try
             {
-                Program.Error($"获取视频信息失败:{obj["message"]}");
+                string url = $"https://api.bilibili.com/x/web-interface/view?bvid={bid}";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"获取视频信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
                 return null;
             }
-            return obj;
         }
 
         public static JObject GetDynamic(string did)
         {
-            string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={did}";
-            var data = Get(url);
-            JObject obj = JObject.Parse(data);
-            if (obj["code"].ToString() != "0")
+            try
             {
-                Program.Error($"获取动态信息失败:{obj["message"]}");
+                string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={did}";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"获取动态信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
                 return null;
             }
-            return obj;
         }
 
         public static string Post(string url, Dictionary<string, string> arg)

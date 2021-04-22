@@ -13,7 +13,6 @@ namespace BotBiliBili
         private static Logs logs;
         private static Robot robot;
         private static RobotConfig RobotConfig;
-
         static void Main(string[] args)
         {
             RunLocal = AppContext.BaseDirectory;
@@ -101,7 +100,7 @@ namespace BotBiliBili
             VideoPicGen.Init();
             DynamicPicGen.Init();
             HttpUtils.Init();
-            //HttpUtils.Check();
+            HttpUtils.Check();
         }
 
         public static void Log(string data)
