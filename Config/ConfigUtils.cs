@@ -7,6 +7,8 @@ namespace BotBiliBili.Config
     {
         private static object Locker = new object();
         public static ConfigObj Config;
+        public static VideoSave VideoPic;
+        public static DynamicSave DynamicPic;
 
         public static T Load<T>(T obj1, string FilePath) where T : new()
         {
@@ -53,75 +55,129 @@ namespace BotBiliBili.Config
                 Command = new()
                 {
                     Head = "#bili",
-                    Video = "video"
+                    Video = "video",
+                    Dynamic = "dynamic",
+                    DynamicUser = "duser"
                 },
-                VideoPic = new()
-                {
-                    BackGround = "#F5F5F5",
-                    QBack = "#F8F8FF",
-                    QPoint = "#0000CD",
-                    QPos = new()
-                    {
-                        X = 460,
-                        Y = 20
-                    },
-                    QSize = 120,
-                    Font = "微软雅黑",
-                    Width = 600,
-                    Height = 800,
-                    HeadPic = new()
-                    {
-                        X = 20,
-                        Y = 20
-                    },
-                    HeadPicSize = 120,
-                    NamePos = new()
-                    {
-                        X = 155,
-                        Y = 20
-                    },
-                    NameSize = 30,
-                    NameColor = "#FF6A6A",
-                    UidPos = new()
-                    {
-                        X = 160,
-                        Y = 75
-                    },
-                    UidSize = 15,
-                    UidColor = "#363636",
-                    TitlePos = new()
-                    {
-                        X = 20,
-                        Y = 155
-                    },
-                    TitleSize = 20,
-                    TitleColor = "#000000",
-                    TitleLim = 20,
-                    StatePos = new()
-                    {
-                        X = 30,
-                        Y = 195
-                    },
-                    StateSize = 15,
-                    StateColor = "#000000",
-                    PicPos = new()
-                    {
-                        X = 20,
-                        Y = -45
-                    },
-                    PicWidth = 896,
-                    PicHeight = 560,
-                    InfoPos = new()
-                    {
-                        X = 20,
-                        Y = 600
-                    },
-                    InfoSize = 20,
-                    InfoColor = "#000000",
-                    InfoLim = 20,
-                    InfoDeviation = 40
-                }
             }, Program.RunLocal + "config.json");
+
+            VideoPic = Load(new VideoSave()
+            {
+                BackGround = "#F5F5F5",
+                QBack = "#F8F8FF",
+                QPoint = "#0000CD",
+                QPos = new()
+                {
+                    X = 460,
+                    Y = 20
+                },
+                QSize = 120,
+                Font = "微软雅黑",
+                Width = 600,
+                Height = 800,
+                HeadPic = new()
+                {
+                    X = 20,
+                    Y = 20
+                },
+                HeadPicSize = 120,
+                NamePos = new()
+                {
+                    X = 155,
+                    Y = 20
+                },
+                NameSize = 20,
+                NameColor = "#FF6A6A",
+                UidPos = new()
+                {
+                    X = 160,
+                    Y = 75
+                },
+                UidSize = 15,
+                UidColor = "#363636",
+                TitlePos = new()
+                {
+                    X = 20,
+                    Y = 155
+                },
+                TitleSize = 20,
+                TitleColor = "#000000",
+                TitleLim = 20,
+                StatePos = new()
+                {
+                    X = 30,
+                    Y = 195
+                },
+                StateSize = 15,
+                StateColor = "#000000",
+                PicPos = new()
+                {
+                    X = 20,
+                    Y = 230
+                },
+                PicWidth = 896,
+                PicHeight = 560,
+                InfoPos = new()
+                {
+                    X = 20,
+                    Y = 600
+                },
+                InfoSize = 20,
+                InfoColor = "#000000",
+                InfoLim = 20,
+                InfoDeviation = 40,
+                InfoLeft = 20
+            }, Program.RunLocal + "video.json");
+
+            DynamicPic = Load(new DynamicSave()
+            {
+                BackGround = "#F5F5F5",
+                QBack = "#F8F8FF",
+                QPoint = "#0000CD",
+                QPos = new()
+                {
+                    X = 460,
+                    Y = 20
+                },
+                QSize = 120,
+                Font = "微软雅黑",
+                Width = 600,
+                Height = 800,
+                HeadPic = new()
+                {
+                    X = 20,
+                    Y = 20
+                },
+                HeadPicSize = 120,
+                NamePos = new()
+                {
+                    X = 155,
+                    Y = 20
+                },
+                NameSize = 20,
+                NameColor = "#FF6A6A",
+                UidPos = new()
+                {
+                    X = 160,
+                    Y = 75
+                },
+                UidSize = 15,
+                UidColor = "#363636",
+                StatePos = new()
+                {
+                    X = 30,
+                    Y = 195
+                },
+                StateSize = 15,
+                StateColor = "#000000",
+                PicStart = new()
+                {
+                    X = 20,
+                    Y = 20
+                },
+                PicWidth = 270,
+                PicPid = 10
+            }, Program.RunLocal + "dynamic.json");
         }
     }
 }

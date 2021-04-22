@@ -38,7 +38,7 @@ namespace BotBiliBili.Utils
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(bitmap, new Rectangle((destWidth - width) / 2, (destHeight - height) / 2, width, height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel);
+                g.DrawImage(bitmap, new Rectangle(0, 0, width, height), 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel);
                 g.Dispose();
                 return destBitmap;
             }

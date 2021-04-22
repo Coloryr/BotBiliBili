@@ -75,6 +75,17 @@ namespace BotBiliBili
                             continue;
                         }
                     }
+                    else if (arg[1] == "dynamic")
+                    {
+                        if (arg.Length != 3)
+                        {
+                            Error("错误的参数");
+                            continue;
+                        }
+                        var data = HttpUtils.GetDynamic(arg[2]);
+                        DynamicPicGen.Gen(data);
+                        Log("已生成");
+                    }
                 }
                 else if (arg[0] == "reload")
                 {
@@ -88,6 +99,7 @@ namespace BotBiliBili
         {
             ConfigUtils.LoadAll();
             VideoPicGen.Init();
+            DynamicPicGen.Init();
             HttpUtils.Init();
             //HttpUtils.Check();
         }

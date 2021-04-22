@@ -29,7 +29,7 @@ namespace BotBiliBili.PicGen
         {
             if (!Directory.Exists(Program.RunLocal + "Video"))
                 Directory.CreateDirectory(Program.RunLocal + "Video");
-            Config = ConfigUtils.Config.VideoPic;
+            Config = ConfigUtils.VideoPic;
             back = ColorTranslator.FromHtml(Config.BackGround);
             name_color?.Dispose();
             uid_color?.Dispose();
@@ -176,10 +176,12 @@ namespace BotBiliBili.PicGen
 
             graphics.Save();
 
-            bitmap.Save($"Video/{data["bvid"]}.jpg");
+            temp = $"Video/{data["bvid"]}.jpg";
+
+            bitmap.Save(temp);
             graphics.Dispose();
             bitmap.Dispose();
-            return Program.RunLocal + $"Video/{data["bvid"]}.jpg";
+            return Program.RunLocal + temp;
         }
     }
 }

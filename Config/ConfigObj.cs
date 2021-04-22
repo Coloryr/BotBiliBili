@@ -11,12 +11,13 @@ namespace BotBiliBili.Config
         public string SESSDATA { get; set; }
         public string bili_jct { get; set; }
         public CommandObj Command { get; set; }
-        public VideoSave VideoPic { get; set; }
     }
     public class CommandObj
     {
         public string Head { get; set; }
         public string Video { get; set; }
+        public string Dynamic { get; set; }
+        public string DynamicUser { get; set; }
     }
 
     public class GroupSave
@@ -42,6 +43,23 @@ namespace BotBiliBili.Config
     {
         public float X { get; set; }
         public float Y { get; set; }
+    }
+    public class DynamicSave : PicSave
+    {
+        public Pos HeadPic { get; set; }
+        public float HeadPicSize { get; set; }
+        public Pos NamePos { get; set; }
+        public float NameSize { get; set; }
+        public string NameColor { get; set; }
+        public Pos UidPos { get; set; }
+        public float UidSize { get; set; }
+        public string UidColor { get; set; }
+        public Pos StatePos { get; set; }
+        public float StateSize { get; set; }
+        public string StateColor { get; set; }
+        public Pos PicStart { get; set; }
+        public int PicWidth { get; set; }
+        public int PicPid { get; set; }
     }
 
     public class VideoSave : PicSave

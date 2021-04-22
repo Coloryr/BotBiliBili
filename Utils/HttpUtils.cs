@@ -82,6 +82,19 @@ namespace BotBiliBili.Utils
             return obj;
         }
 
+        public static JObject GetDynamic(string did)
+        {
+            string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={did}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
+            {
+                Program.Error($"获取动态信息失败:{obj["message"]}");
+                return null;
+            }
+            return obj;
+        }
+
         public static string Post(string url, Dictionary<string, string> arg)
         {
             return client.PostAsync(url, new FormUrlEncodedContent(arg)).Result.Content.ReadAsStringAsync().Result;
