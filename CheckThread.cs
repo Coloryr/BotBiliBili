@@ -39,6 +39,8 @@ namespace BotBiliBili
                             {
                                 var obj1 = HttpUtils.GetDynamicUid(item1);
                                 Thread.Sleep(ConfigUtils.Config.CheckDelay);
+                                if (!IsRun)
+                                    return;
                                 if (obj1 == null)
                                     continue;
                                 var obj2 = obj1["data"]["cards"] as JArray;
@@ -80,6 +82,8 @@ namespace BotBiliBili
                             {
                                 var obj1 = HttpUtils.GetLiveUID(item1);
                                 Thread.Sleep(ConfigUtils.Config.CheckDelay);
+                                if (!IsRun)
+                                    return;
                                 if (obj1 == null)
                                     continue;
                                 var obj2 = (int)obj1["data"]["roomStatus"];
