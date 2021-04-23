@@ -136,6 +136,7 @@ namespace BotBiliBili.PicGen
                 Config.PicHeight, Config.PicWidth), Config.PicPos.X, Config.PicPos.Y);
 
             temp = data["room_info"]["description"].ToString();
+            temp = temp[3..^4];
 
             int AllLength = (temp.Length / Config.InfoLim + 2 +
                 Tools.SubstringCount(temp, "\n")) * Config.InfoDeviation + (int)Config.InfoPos.Y;
