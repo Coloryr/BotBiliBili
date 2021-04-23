@@ -102,6 +102,9 @@ namespace BotBiliBili.PicGen
                 case 2:
                     Type2(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                     break;
+                case 8:
+                    Type8(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
+                    break;
             }
 
 
@@ -112,6 +115,156 @@ namespace BotBiliBili.PicGen
             graphics.Dispose();
             bitmap.Dispose();
             return Program.RunLocal + temp;
+        }
+
+        private static void Type8(JObject data, ref Bitmap bitmap, ref Graphics graphics)
+        {
+            string dynamic = data["dynamic"].ToString();
+            dynamic = "发布视频：\n" + dynamic;
+            string temp1;
+            string[] list = dynamic.Split("\n");
+            int d = 0;
+            float NowY = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    NowY = Config.PicStart.Y + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                    {
+                        break;
+                    }
+                }
+            }
+            NowY += Config.TextDeviation + 10;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
+            NowY += 18;
+
+            string title = data["title"].ToString();
+            int c = 0;
+            while (true)
+            {
+                int now = 0;
+                if (Config.TextLim + c > title.Length)
+                {
+                    temp1 = title;
+                    break;
+                }
+                string temp2 = title.Substring(now, Config.TextLim + c);
+                SizeF size = graphics.MeasureString(temp2, text_font);
+                if (size.Width > Config.Width - Config.TextLeft)
+                {
+                    temp1 = title.Substring(now, Config.TextLim + c - 2) + "...";
+                    break;
+                }
+                c++;
+            }
+
+            graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+
+            float xPos = Config.PicStart.X;
+
+            string pic_url = data["pic"].ToString();
+            Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
+            pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
+            if (NowY + pic1.Height > bitmap.Height)
+            {
+                graphics.Save();
+                Bitmap bitmap1 = new(Config.Width, (int)(NowY + pic1.Height));
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+            graphics.DrawImage(pic1, xPos,
+               NowY, pic1.Width, pic1.Height);
+            NowY += pic1.Height + Config.PicPid;
+
+            pic1.Dispose();
+
+            string desc = data["desc"].ToString();
+
+            int AllLength = (desc.Length / Config.TextLim + 2 +
+                Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
+            if (AllLength > bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, AllLength);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+
+            list = desc.Split("\n");
+            d = 0;
+            float yPos = NowY;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                        break;
+                }
+            }
         }
 
         private static void Type1(JObject data, ref Bitmap bitmap, ref Graphics graphics)

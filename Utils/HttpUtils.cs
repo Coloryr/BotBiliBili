@@ -122,6 +122,26 @@ namespace BotBiliBili.Utils
                 return null;
             }
         }
+        public static JObject GetLive(string room)
+        {
+            try
+            {
+                string url = $"https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={room}";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"获取动态信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
+                return null;
+            }
+        }
 
         public static JObject GetDynamicUid(string uid)
         {
@@ -133,6 +153,46 @@ namespace BotBiliBili.Utils
                 if (obj["code"].ToString() != "0")
                 {
                     Program.Error($"获取动态信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
+                return null;
+            }
+        }
+        public static JObject SearchUser(string name)
+        {
+            try
+            {
+                string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=bili_user";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"搜索用户失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
+                return null;
+            }
+        }
+        public static JObject SearchVideo(string name)
+        {
+            try
+            {
+                string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=video";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"搜索视频失败:{obj["message"]}");
                     return null;
                 }
                 return obj;

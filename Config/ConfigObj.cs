@@ -11,14 +11,26 @@ namespace BotBiliBili.Config
         public string SESSDATA { get; set; }
         public string bili_jct { get; set; }
         public CommandObj Command { get; set; }
+        public int CheckDelay { get; set; }
+        public Dictionary<long, SubscribeObj> Subscribes { get; set; }
+    }
+    public class SubscribeObj
+    { 
+        public List<long> Uids { get; set; }
+        public List<long> Lives { get; set; }
     }
     public class CommandObj
     {
         public string Head { get; set; }
+        public string Help { get; set; }
         public string Video { get; set; }
+        public string VideoName { get; set; }
         public string Dynamic { get; set; }
         public string DynamicUser { get; set; }
         public string DynamicName { get; set; }
+        public string Live { get; set; }
+        public string LiveName { get; set; }
+        public string LiveUid { get; set; }
     }
 
     public class GroupSave
@@ -38,6 +50,14 @@ namespace BotBiliBili.Config
         public string QPoint { get; set; }
         public Pos QPos { get; set; }
         public int QSize { get; set; }
+        public Pos HeadPic { get; set; }
+        public float HeadPicSize { get; set; }
+        public Pos NamePos { get; set; }
+        public float NameSize { get; set; }
+        public string NameColor { get; set; }
+        public Pos UidPos { get; set; }
+        public float UidSize { get; set; }
+        public string UidColor { get; set; }
     }
 
     public class Pos
@@ -47,14 +67,6 @@ namespace BotBiliBili.Config
     }
     public class DynamicSave : PicSave
     {
-        public Pos HeadPic { get; set; }
-        public float HeadPicSize { get; set; }
-        public Pos NamePos { get; set; }
-        public float NameSize { get; set; }
-        public string NameColor { get; set; }
-        public Pos UidPos { get; set; }
-        public float UidSize { get; set; }
-        public string UidColor { get; set; }
         public Pos StatePos { get; set; }
         public float StateSize { get; set; }
         public string StateColor { get; set; }
@@ -72,14 +84,6 @@ namespace BotBiliBili.Config
 
     public class VideoSave : PicSave
     {
-        public Pos HeadPic { get; set; }
-        public float HeadPicSize { get; set; }
-        public Pos NamePos { get; set; }
-        public float NameSize { get; set; }
-        public string NameColor { get; set; }
-        public Pos UidPos { get; set; }
-        public float UidSize { get; set; }
-        public string UidColor { get; set; }
         public Pos TitlePos { get; set; }
         public float TitleSize { get; set; }
         public string TitleColor { get; set; }
@@ -96,5 +100,27 @@ namespace BotBiliBili.Config
         public int InfoLim { get; set; }
         public int InfoDeviation { get; set; }
         public int InfoLeft { get; set; }
+    }
+    public class LiveSave : PicSave
+    {
+        public Pos StatePos { get; set; }
+        public float StateSize { get; set; }
+        public string StateColor { get; set; }
+        public Pos TitlePos { get; set; }
+        public float TitleSize { get; set; }
+        public string TitleColor { get; set; }
+        public int TitleLim { get; set; }
+        public Pos LivePos { get; set; }
+        public float LiveSize { get; set; }
+        public string LiveColor { get; set; }
+        public int TextLeft { get; set; }
+        public Pos PicPos { get; set; }
+        public int PicWidth { get; set; }
+        public int PicHeight { get; set; }
+        public Pos InfoPos { get; set; }
+        public float InfoSize { get; set; }
+        public string InfoColor { get; set; }
+        public int InfoLim { get; set; }
+        public int InfoDeviation { get; set; }
     }
 }
