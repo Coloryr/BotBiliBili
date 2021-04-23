@@ -34,12 +34,15 @@ namespace BotBiliBili
             robot = new();
             robot.Set(RobotConfig);
             robot.Start();
+            CheckThread.Start();
             while (true)
             {
                 string temp = Console.ReadLine();
                 string[] arg = temp.Split(' ');
                 if (arg[0] == "stop")
                 {
+                    CheckThread.Stop();
+                    HttpUtils.Cancel();
                     robot.Stop();
                     return;
                 }
@@ -119,6 +122,7 @@ namespace BotBiliBili
 
         public static void Reload()
         {
+            HttpUtils.Cancel();
             ConfigUtils.LoadAll();
             VideoPicGen.Init();
             DynamicPicGen.Init();
@@ -146,7 +150,7 @@ namespace BotBiliBili
             }, 52));
         }
 
-        private static void SendGroupImage(string local, long group)
+        public static void SendGroupImage(string local, long group)
         {
             robot.AddTask(BuildPack.Build(new LoadFileSendToGroupImagePack
             {
@@ -182,7 +186,9 @@ namespace BotBiliBili
                                 $"{ConfigUtils.Config.Command.DynamicName} [UP的名字] 生成UP主最新动态图片\n" +
                                 $"{ConfigUtils.Config.Command.Live} [房间号] 生成直播间图片\n" +
                                 $"{ConfigUtils.Config.Command.LiveName} [UP主名字] 生成UP主的直播间图片\n" +
-                                $"{ConfigUtils.Config.Command.LiveUid} [UID] 生成UP主的直播间图片", pack.id);
+                                $"{ConfigUtils.Config.Command.LiveUid} [UID] 生成UP主的直播间图片\n" +
+                                $"{ConfigUtils.Config.Command.SubscribeUid} [UID] 订阅UP主的动态\n" +
+                                $"{ConfigUtils.Config.Command.SubscribeLive} [UID] 订阅UP主的直播", pack.id);
                             break;
                         }
                         else if (temp[1] == ConfigUtils.Config.Command.Video)
@@ -515,6 +521,88 @@ namespace BotBiliBili
                                     Error(e);
                                 }
                             });
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.SubscribeUid)
+                        {
+                            if (ConfigUtils.Config.AdminSubscribeOnly)
+                            {
+                                if (pack.permission == MemberPermission.MEMBER)
+                                    break;
+                            }
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (Tools.IsNumeric(comm))
+                            {
+                                SendGroupMessage("错误的UID", pack.id);
+                                break;
+                            }
+                            Log($"群:{pack.id} 订阅UP主:{comm} 的动态");
+                            if (ConfigUtils.Subscribes.ContainsKey(pack.id))
+                            {
+                                SubscribeObj obj = ConfigUtils.Subscribes[pack.id];
+                                if (obj.Uids.Contains(comm))
+                                {
+                                    SendGroupMessage("已经订阅过了", pack.id);
+                                    break;
+                                }
+                                obj.Uids.Add(comm);
+                            }
+                            else
+                            {
+                                SubscribeObj obj = new()
+                                {
+                                    Uids = new(),
+                                    Lives = new()
+                                };
+                                obj.Uids.Add(comm);
+                            }
+                            SendGroupMessage("订阅成功", pack.id);
+                            ConfigUtils.SaveSubscribe();
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.SubscribeLive)
+                        {
+                            if (ConfigUtils.Config.AdminSubscribeOnly)
+                            {
+                                if (pack.permission == MemberPermission.MEMBER)
+                                    break;
+                            }
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (Tools.IsNumeric(comm))
+                            {
+                                SendGroupMessage("错误的UID", pack.id);
+                                break;
+                            }
+                            Log($"群:{pack.id} 订阅UP主:{comm} 的直播");
+                            if (ConfigUtils.Subscribes.ContainsKey(pack.id))
+                            {
+                                SubscribeObj obj = ConfigUtils.Subscribes[pack.id];
+                                if (obj.Lives.Contains(comm))
+                                {
+                                    SendGroupMessage("已经订阅过了", pack.id);
+                                    break;
+                                }
+                                obj.Lives.Add(comm);
+                            }
+                            else
+                            {
+                                SubscribeObj obj = new()
+                                {
+                                    Uids = new(),
+                                    Lives = new()
+                                };
+                                obj.Lives.Add(comm);
+                            }
+                            SendGroupMessage("订阅成功", pack.id);
+                            ConfigUtils.SaveSubscribe();
                         }
                     }
 

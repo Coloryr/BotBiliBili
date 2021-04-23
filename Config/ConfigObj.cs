@@ -12,12 +12,19 @@ namespace BotBiliBili.Config
         public string bili_jct { get; set; }
         public CommandObj Command { get; set; }
         public int CheckDelay { get; set; }
-        public Dictionary<long, SubscribeObj> Subscribes { get; set; }
+        public int TimeOut { get; set; }
+        public bool AdminSubscribeOnly { get; set; }
+        public Dictionary<string, string> RequestHeaders { get; set; }
+    }
+    public class UidLastSave
+    {
+        public Dictionary<string, string> Dynamic { get; set; }
+        public Dictionary<string, bool> Live { get; set; }
     }
     public class SubscribeObj
     { 
-        public List<long> Uids { get; set; }
-        public List<long> Lives { get; set; }
+        public List<string> Uids { get; set; }
+        public List<string> Lives { get; set; }
     }
     public class CommandObj
     {
@@ -31,6 +38,8 @@ namespace BotBiliBili.Config
         public string Live { get; set; }
         public string LiveName { get; set; }
         public string LiveUid { get; set; }
+        public string SubscribeUid { get; set; }
+        public string SubscribeLive { get; set; }
     }
 
     public class GroupSave

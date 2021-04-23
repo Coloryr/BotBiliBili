@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 
 namespace BotBiliBili.Utils
 {
@@ -13,6 +14,11 @@ namespace BotBiliBili.Utils
         private static HttpClient client;
         private static CookieContainer Cookie;
         private static HttpClientHandler HttpClientHandler;
+        private static CancellationTokenSource cancellation;
+        public static void Cancel()
+        {
+            cancellation?.Cancel(false);
+        }
         public static void Init()
         {
             if (client != null)
@@ -30,9 +36,13 @@ namespace BotBiliBili.Utils
             };
             client = new HttpClient(HttpClientHandler)
             {
-                Timeout = TimeSpan.FromSeconds(5)
+                Timeout = TimeSpan.FromSeconds(ConfigUtils.Config.TimeOut)
             };
-            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42");
+            foreach (var item in ConfigUtils.Config.RequestHeaders)
+            {
+                client.DefaultRequestHeaders.Add(item.Key, item.Value);
+            }
+            cancellation = new();
         }
 
         public static void Check()
@@ -246,17 +256,17 @@ namespace BotBiliBili.Utils
 
         public static string Post(string url, Dictionary<string, string> arg)
         {
-            return client.PostAsync(url, new FormUrlEncodedContent(arg)).Result.Content.ReadAsStringAsync().Result;
+            return client.PostAsync(url, new FormUrlEncodedContent(arg), cancellation.Token).Result.Content.ReadAsStringAsync().Result;
         }
 
         public static string Get(string url)
         {
-            return client.GetStringAsync(url).Result;
+            return client.GetStringAsync(url, cancellation.Token).Result;
         }
 
         public static Stream GetData(string url)
         {
-            return client.GetStreamAsync(url).Result;
+            return client.GetStreamAsync(url, cancellation.Token).Result;
         }
     }
 }

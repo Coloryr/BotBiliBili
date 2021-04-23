@@ -1,5 +1,8 @@
 ﻿using BotBiliBili.PicGen;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 
 namespace BotBiliBili.Config
@@ -11,6 +14,8 @@ namespace BotBiliBili.Config
         public static VideoSave VideoPic;
         public static DynamicSave DynamicPic;
         public static LiveSave LivePic;
+        public static ConcurrentDictionary<long, SubscribeObj> Subscribes;
+        public static UidLastSave UidLast;
 
         public static T Load<T>(T obj1, string FilePath) where T : new()
         {
@@ -65,10 +70,17 @@ namespace BotBiliBili.Config
                     DynamicName = "nuser",
                     Live = "live",
                     LiveName = "nlive",
-                    LiveUid = "ulive"
+                    LiveUid = "ulive",
+                    SubscribeUid = "suid",
+                    SubscribeLive = "slive"
                 },
-                CheckDelay = 10,
-                Subscribes = new()
+                CheckDelay = 1000,
+                TimeOut = 10,
+                AdminSubscribeOnly = true,
+                RequestHeaders = new()
+                {
+                    { "user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42" }
+                }
             }, Program.RunLocal + "config.json");
 
             VideoPic = Load(new VideoSave()
@@ -192,8 +204,8 @@ namespace BotBiliBili.Config
                 TextSize = 20,
                 TextColor = "#000000",
                 TextDeviation = 40,
-                TextLeft = 20,
-                TextLim = 30
+                TextLeft = 30,
+                TextLim = 20
             }, Program.RunLocal + "dynamic.json");
 
             LivePic = Load(new LiveSave()
@@ -246,7 +258,7 @@ namespace BotBiliBili.Config
                 TitleColor = "#000000",
                 TitleLim = 20,
                 LivePos = new()
-                { 
+                {
                     X = 160,
                     Y = 120
                 },
@@ -270,6 +282,22 @@ namespace BotBiliBili.Config
                 InfoLim = 20,
                 InfoDeviation = 40,
             }, Program.RunLocal + "live.json");
+
+            Subscribes = Load(new ConcurrentDictionary<long, SubscribeObj>(), Program.RunLocal + "subscribes.json");
+
+            UidLast = Load(new UidLastSave()
+            {
+                Dynamic = new(),
+                Live = new()
+            }, Program.RunLocal + "temp.json");
+        }
+        public static void SaveTemp()
+        {
+            Save(UidLast, Program.RunLocal + "temp.json");
+        }
+        public static void SaveSubscribe()
+        {
+            Save(Subscribes, Program.RunLocal + "subscribes.json");
         }
     }
 }
