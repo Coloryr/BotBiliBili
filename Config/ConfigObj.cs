@@ -18,6 +18,7 @@ namespace BotBiliBili.Config
         public string Video { get; set; }
         public string Dynamic { get; set; }
         public string DynamicUser { get; set; }
+        public string DynamicName { get; set; }
     }
 
     public class GroupSave

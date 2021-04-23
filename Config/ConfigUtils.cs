@@ -57,7 +57,8 @@ namespace BotBiliBili.Config
                     Head = "#bili",
                     Video = "video",
                     Dynamic = "dynamic",
-                    DynamicUser = "duser"
+                    DynamicUser = "duser",
+                    DynamicName = "nuser"
                 },
             }, Program.RunLocal + "config.json");
 
@@ -166,7 +167,7 @@ namespace BotBiliBili.Config
                 StatePos = new()
                 {
                     X = 30,
-                    Y = 195
+                    Y = 150
                 },
                 StateSize = 15,
                 StateColor = "#000000",
@@ -180,7 +181,10 @@ namespace BotBiliBili.Config
                 TextX = 20,
                 TextPid = 20,
                 TextSize = 20,
-                TextColor = "#000000"
+                TextColor = "#000000",
+                TextDeviation = 40,
+                TextLeft = 20,
+                TextLim = 20
             }, Program.RunLocal + "dynamic.json");
         }
     }

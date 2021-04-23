@@ -123,6 +123,27 @@ namespace BotBiliBili.Utils
             }
         }
 
+        public static JObject GetDynamicUid(string uid)
+        {
+            try
+            {
+                string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid={uid}";
+                var data = Get(url);
+                JObject obj = JObject.Parse(data);
+                if (obj["code"].ToString() != "0")
+                {
+                    Program.Error($"获取动态信息失败:{obj["message"]}");
+                    return null;
+                }
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
+                return null;
+            }
+        }
+
         public static string Post(string url, Dictionary<string, string> arg)
         {
             return client.PostAsync(url, new FormUrlEncodedContent(arg)).Result.Content.ReadAsStringAsync().Result;

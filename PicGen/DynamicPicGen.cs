@@ -57,19 +57,22 @@ namespace BotBiliBili.PicGen
         {
             if (obj == null)
                 return null;
-            JObject data = obj["data"]["card"] as JObject;
+            if (obj["data"]?["card"] is not JObject data)
+            {
+                data = obj["data"]["cards"][0] as JObject;
+            }
             string id = data["desc"]["dynamic_id"].ToString();
-            string temp = data["card"].ToString();
-            JObject data1 = JObject.Parse(temp);
+            
+            JObject desc = data["desc"] as JObject;
             Bitmap bitmap = new(
                 Config.Width,
                 Config.Height);
             Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.InterpolationMode = InterpolationMode.High;
+            graphics.InterpolationMode = InterpolationMode.;
             graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             graphics.Clear(back);
 
-            string pic_url = data1["user"]["head_url"].ToString();
+            string pic_url = desc["user_profile"]["info"]["face"].ToString();
             using Bitmap pic = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
 
             graphics.DrawImage(pic, Config.HeadPic.X,
@@ -77,9 +80,9 @@ namespace BotBiliBili.PicGen
                 Config.HeadPicSize,
                 Config.HeadPicSize);
 
-            graphics.DrawString(data1["user"]["name"].ToString(), name_font, name_color, Config.NamePos.X, Config.NamePos.Y);
+            graphics.DrawString(desc["user_profile"]["info"]["uname"].ToString(), name_font, name_color, Config.NamePos.X, Config.NamePos.Y);
 
-            graphics.DrawString("UID:" + data1["user"]["uid"].ToString(), uid_font, uid_color, Config.UidPos.X, Config.UidPos.Y);
+            graphics.DrawString("UID:" + desc["user_profile"]["info"]["uname"].ToString(), uid_font, uid_color, Config.UidPos.X, Config.UidPos.Y);
             string sort = $"https://t.bilibili.com/{id}";
             var code = CQode.code(sort, pic, Qback, Qpoint);
             graphics.DrawImage(code, Config.QPos.X, Config.QPos.Y,
@@ -87,38 +90,64 @@ namespace BotBiliBili.PicGen
 
             DateTime startTime = new(1970, 1, 1);
             DateTime dt = startTime.AddSeconds((long)data["desc"]["timestamp"]);
-            temp = dt.ToString("yyyy/MM/dd HH:mm:ss");
+            string temp = dt.ToString("yyyy/MM/dd HH:mm:ss");
             graphics.DrawString($"{temp}  观看:{data["desc"]["view"]}  点赞:{data["desc"]["like"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
 
+            int type = (int)desc["type"];
+            switch (type)
+            {
+                case 1:
+
+                    break;
+                case 2:
+                    Type2(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
+                    break;
+            }
+            
+
+            temp = $"Dynamic/{id}.jpg";
+
+            graphics.Save();
+            bitmap.Save(temp);
+            graphics.Dispose();
+            bitmap.Dispose();
+            return Program.RunLocal + temp;
+        }
+
+        private static void Type2(JObject data1, ref Bitmap bitmap,ref Graphics graphics)
+        {
             JArray array = data1["item"]["pictures"] as JArray;
             float xPos = Config.PicStart.X, yPos = Config.PicStart.Y;
-            for (int a = 0; a < array.Count; a++)
+            if (array != null)
             {
-                string pic_url1 = array[a]["img_src"].ToString();
-                Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url1)) as Bitmap;
-                pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
-                if (yPos + pic1.Height  > bitmap.Height)
+                for (int a = 0; a < array.Count; a++)
                 {
-                    graphics.Save();
-                    Bitmap bitmap1 = new(Config.Width, (int)(yPos + pic1.Height));
-                    graphics = Graphics.FromImage(bitmap1);
-                    graphics.InterpolationMode = InterpolationMode.High;
-                    graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-                    graphics.Clear(back);
-                    graphics.DrawImage(bitmap, 0, 0);
-                    bitmap.Dispose();
-                    bitmap = bitmap1;
+                    string pic_url1 = array[a]["img_src"].ToString();
+                    Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url1)) as Bitmap;
+                    pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
+                    if (yPos + pic1.Height > bitmap.Height)
+                    {
+                        graphics.Save();
+                        Bitmap bitmap1 = new(Config.Width, (int)(yPos + pic1.Height));
+                        graphics = Graphics.FromImage(bitmap1);
+                        graphics.InterpolationMode = InterpolationMode.High;
+                        graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                        graphics.Clear(back);
+                        graphics.DrawImage(bitmap, 0, 0);
+                        bitmap.Dispose();
+                        bitmap = bitmap1;
+                    }
+                    graphics.DrawImage(pic1, xPos,
+                       yPos, pic1.Width, pic1.Height);
+                    yPos += pic1.Height + Config.PicPid;
+
+                    pic1.Dispose();
                 }
-                graphics.DrawImage(pic1, xPos,
-                   yPos, pic1.Width, pic1.Height);
-                yPos += pic1.Height + Config.PicPid;
-                
-                pic1.Dispose();
             }
 
             yPos += Config.TextPid;
 
-            temp = data1["item"]["description"].ToString();
+            string temp = data1["item"]["description"].ToString();
 
             int AllLength = (temp.Length / Config.TextLim + 2 +
                 Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
@@ -173,14 +202,6 @@ namespace BotBiliBili.PicGen
                         break;
                 }
             }
-
-            temp = $"Dynamic/{id}.jpg";
-
-            graphics.Save();
-            bitmap.Save(temp);
-            graphics.Dispose();
-            bitmap.Dispose();
-            return Program.RunLocal + temp;
         }
     }
 }

@@ -85,6 +85,17 @@ namespace BotBiliBili
                         DynamicPicGen.Gen(data);
                         Log("已生成");
                     }
+                    else if (arg[1] == "duser")
+                    {
+                        if (arg.Length != 3)
+                        {
+                            Error("错误的参数");
+                            continue;
+                        }
+                        var data = HttpUtils.GetDynamicUid(arg[2]);
+                        DynamicPicGen.Gen(data);
+                        Log("已生成");
+                    }
                 }
                 else if (arg[0] == "reload")
                 {
@@ -100,7 +111,7 @@ namespace BotBiliBili
             VideoPicGen.Init();
             DynamicPicGen.Init();
             HttpUtils.Init();
-            HttpUtils.Check();
+            //HttpUtils.Check();
         }
 
         public static void Log(string data)
@@ -161,15 +172,22 @@ namespace BotBiliBili
                                 Log($"正在生成视频:{comm}的图片");
                                 Task.Run(() =>
                                 {
-                                    var data1 = HttpUtils.GetVideoA(temp[2]);
-                                    if (data1 == null)
+                                    try
                                     {
-                                        SendGroupMessage($"获取不到视频：{comm}", pack.id);
-                                        return;
+                                        var data1 = HttpUtils.GetVideoA(temp[2]);
+                                        if (data1 == null)
+                                        {
+                                            SendGroupMessage($"获取不到视频：{comm}", pack.id);
+                                            return;
+                                        }
+                                        string temp1 = VideoPicGen.Gen(data1);
+                                        Log($"已生成{temp1}");
+                                        SendGroupImage(temp1, pack.id);
                                     }
-                                    string temp1 = VideoPicGen.Gen(data1);
-                                    Log($"已生成{temp1}");
-                                    SendGroupImage(temp1, pack.id);
+                                    catch (Exception e)
+                                    {
+                                        Error(e);
+                                    }
                                 });
                             }
                             else if (comm.StartsWith("bv"))
@@ -177,15 +195,22 @@ namespace BotBiliBili
                                 Log($"正在生成视频:{comm}的图片");
                                 Task.Run(() =>
                                 {
-                                    var data1 = HttpUtils.GetVideoB(temp[2]);
-                                    if (data1 == null)
+                                    try
                                     {
-                                        SendGroupMessage($"获取不到视频：{comm}", pack.id);
-                                        return;
+                                        var data1 = HttpUtils.GetVideoB(temp[2]);
+                                        if (data1 == null)
+                                        {
+                                            SendGroupMessage($"获取不到视频：{comm}", pack.id);
+                                            return;
+                                        }
+                                        string temp1 = VideoPicGen.Gen(data1);
+                                        Log($"已生成{temp1}");
+                                        SendGroupImage(temp1, pack.id);
                                     }
-                                    string temp1 = VideoPicGen.Gen(data1);
-                                    Log($"已生成{temp1}");
-                                    SendGroupImage(temp1, pack.id);
+                                    catch (Exception e)
+                                    {
+                                        Error(e);
+                                    }
                                 });
                             }
                             else
@@ -206,20 +231,64 @@ namespace BotBiliBili
                                 Log($"正在生成动态:{comm}的图片");
                                 Task.Run(() =>
                                 {
-                                    var data1 = HttpUtils.GetDynamic(temp[2]);
-                                    if (data1 == null)
+                                    try
                                     {
-                                        SendGroupMessage($"获取不到动态：{comm}", pack.id);
-                                        return;
+                                        var data1 = HttpUtils.GetDynamic(temp[2]);
+                                        if (data1 == null)
+                                        {
+                                            SendGroupMessage($"获取不到动态：{comm}", pack.id);
+                                            return;
+                                        }
+                                        string temp1 = DynamicPicGen.Gen(data1);
+                                        Log($"已生成{temp1}");
+                                        SendGroupImage(temp1, pack.id);
                                     }
-                                    string temp1 = DynamicPicGen.Gen(data1);
-                                    Log($"已生成{temp1}");
-                                    SendGroupImage(temp1, pack.id);
+                                    catch (Exception e)
+                                    {
+                                        Error(e);
+                                    }
                                 });
                             }
                             else
                             {
                                 SendGroupMessage("错误的动态号", pack.id);
+                                break;
+                            }
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.DynamicUser)
+                        {
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (!Tools.IsNumeric(comm))
+                            {
+                                Log($"正在生成动态:{comm}的图片");
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        var data1 = HttpUtils.GetDynamicUid(temp[2]);
+                                        if (data1 == null)
+                                        {
+                                            SendGroupMessage($"获取不到动态：{comm}", pack.id);
+                                            return;
+                                        }
+                                        string temp1 = DynamicPicGen.Gen(data1);
+                                        Log($"已生成{temp1}");
+                                        SendGroupImage(temp1, pack.id);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Error(e);
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                SendGroupMessage("错误的UP主号", pack.id);
                                 break;
                             }
                         }
