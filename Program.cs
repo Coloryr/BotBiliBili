@@ -34,8 +34,8 @@ namespace BotBiliBili
             };
             robot = new();
             robot.Set(RobotConfig);
-            //robot.Start();
-            //CheckThread.Start();
+            robot.Start();
+            CheckThread.Start();
             while (true)
             {
                 string temp = Console.ReadLine();
