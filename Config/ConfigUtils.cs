@@ -184,7 +184,7 @@ namespace BotBiliBili.Config
                 TextColor = "#000000",
                 TextDeviation = 40,
                 TextLeft = 20,
-                TextLim = 20
+                TextLim = 30
             }, Program.RunLocal + "dynamic.json");
         }
     }

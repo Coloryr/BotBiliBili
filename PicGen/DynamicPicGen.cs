@@ -62,13 +62,13 @@ namespace BotBiliBili.PicGen
                 data = obj["data"]["cards"][0] as JObject;
             }
             string id = data["desc"]["dynamic_id"].ToString();
-            
+
             JObject desc = data["desc"] as JObject;
             Bitmap bitmap = new(
                 Config.Width,
                 Config.Height);
             Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.InterpolationMode = InterpolationMode.;
+            graphics.InterpolationMode = InterpolationMode.High;
             graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             graphics.Clear(back);
 
@@ -82,7 +82,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString(desc["user_profile"]["info"]["uname"].ToString(), name_font, name_color, Config.NamePos.X, Config.NamePos.Y);
 
-            graphics.DrawString("UID:" + desc["user_profile"]["info"]["uname"].ToString(), uid_font, uid_color, Config.UidPos.X, Config.UidPos.Y);
+            graphics.DrawString("UID:" + desc["user_profile"]["info"]["uid"].ToString(), uid_font, uid_color, Config.UidPos.X, Config.UidPos.Y);
             string sort = $"https://t.bilibili.com/{id}";
             var code = CQode.code(sort, pic, Qback, Qpoint);
             graphics.DrawImage(code, Config.QPos.X, Config.QPos.Y,
@@ -97,13 +97,13 @@ namespace BotBiliBili.PicGen
             switch (type)
             {
                 case 1:
-
+                    Type1(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                     break;
                 case 2:
                     Type2(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                     break;
             }
-            
+
 
             temp = $"Dynamic/{id}.jpg";
 
@@ -114,11 +114,68 @@ namespace BotBiliBili.PicGen
             return Program.RunLocal + temp;
         }
 
-        private static void Type2(JObject data1, ref Bitmap bitmap,ref Graphics graphics)
+        private static void Type1(JObject data, ref Bitmap bitmap, ref Graphics graphics)
         {
-            JArray array = data1["item"]["pictures"] as JArray;
-            float xPos = Config.PicStart.X, yPos = Config.PicStart.Y;
-            if (array != null)
+            JObject data1 = data["item"] as JObject;
+            string content = data1["content"].ToString();
+            content = "转发动态：\n" + content;
+            string temp1;
+            float yPos = Config.PicStart.Y;
+            string[] list = content.Split("\n");
+            int d = 0;
+            float NowY = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                    {
+                        break;
+                    }
+                }
+            }
+            NowY += Config.TextDeviation + 10;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X , NowY, Config.Width - Config.PicStart.X * 2, 2);
+            NowY += 18;
+
+            var origin_user = data["origin_user"] as JObject;
+            graphics.DrawString(origin_user["info"]["uname"].ToString() + " UID:" + origin_user["info"]["uid"].ToString(), state_font, name_color, Config.StatePos.X, NowY);
+
+            NowY += Config.StateSize + 20;
+
+            Type2(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
+        }
+
+        private static void Type2(JObject data1, ref Bitmap bitmap, ref Graphics graphics, float y = 0)
+        {
+            float xPos = Config.PicStart.X, yPos = y == 0 ? Config.PicStart.Y : y;
+            if (data1["item"]["pictures"] is JArray array)
             {
                 for (int a = 0; a < array.Count; a++)
                 {
