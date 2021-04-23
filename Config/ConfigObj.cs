@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace BotBiliBili.Config
 {
@@ -23,8 +24,8 @@ namespace BotBiliBili.Config
     }
     public class SubscribeObj
     { 
-        public List<string> Uids { get; set; }
-        public List<string> Lives { get; set; }
+        public ConcurrentDictionary<string, List<long>> Uids { get; set; }
+        public ConcurrentDictionary<string, List<long>> Lives { get; set; }
     }
     public class CommandObj
     {

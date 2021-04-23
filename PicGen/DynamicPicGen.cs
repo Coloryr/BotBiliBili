@@ -120,7 +120,10 @@ namespace BotBiliBili.PicGen
         private static void Type8(JObject data, ref Bitmap bitmap, ref Graphics graphics)
         {
             string dynamic = data["dynamic"].ToString();
-            dynamic = "发布视频：\n" + dynamic;
+            if (dynamic.Length == 0)
+                dynamic = "发布视频：";
+            else
+                dynamic = "发布视频：\n" + dynamic;
             string temp1;
             string[] list = dynamic.Split("\n");
             int d = 0;
@@ -186,6 +189,8 @@ namespace BotBiliBili.PicGen
             }
 
             graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+
+            NowY += Config.TextDeviation + 10;
 
             float xPos = Config.PicStart.X;
 

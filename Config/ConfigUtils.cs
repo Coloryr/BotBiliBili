@@ -14,7 +14,7 @@ namespace BotBiliBili.Config
         public static VideoSave VideoPic;
         public static DynamicSave DynamicPic;
         public static LiveSave LivePic;
-        public static ConcurrentDictionary<long, SubscribeObj> Subscribes;
+        public static SubscribeObj Subscribes;
         public static UidLastSave UidLast;
 
         public static T Load<T>(T obj1, string FilePath) where T : new()
@@ -283,7 +283,11 @@ namespace BotBiliBili.Config
                 InfoDeviation = 40,
             }, Program.RunLocal + "live.json");
 
-            Subscribes = Load(new ConcurrentDictionary<long, SubscribeObj>(), Program.RunLocal + "subscribes.json");
+            Subscribes = Load(new SubscribeObj()
+            {
+                Lives = new(),
+                Uids = new()
+            }, Program.RunLocal + "subscribes.json");
 
             UidLast = Load(new UidLastSave()
             {

@@ -29,97 +29,100 @@ namespace BotBiliBili
                 try
                 {
                     bool save = false;
-                    foreach (var item in ConfigUtils.Subscribes)
+                    foreach (var item in ConfigUtils.Subscribes.Lives)
                     {
-                        long group = item.Key;
-                        SubscribeObj obj = item.Value;
-                        foreach (var item1 in obj.Uids)
+                        try
                         {
-                            try
-                            {
-                                var obj1 = HttpUtils.GetDynamicUid(item1);
-                                Thread.Sleep(ConfigUtils.Config.CheckDelay);
-                                if (!IsRun)
-                                    return;
-                                if (obj1 == null)
-                                    continue;
-                                var obj2 = obj1["data"]["cards"] as JArray;
-                                if (obj2.Count == 0)
-                                    continue;
-                                var obj3 = obj2[0]["desc"]["dynamic_id"].ToString();
+                            var item1 = item.Key;
+                            var obj1 = HttpUtils.GetDynamicUid(item1);
+                            Thread.Sleep(ConfigUtils.Config.CheckDelay);
+                            if (!IsRun)
+                                return;
+                            if (obj1 == null)
+                                continue;
+                            var obj2 = obj1["data"]["cards"] as JArray;
+                            if (obj2.Count == 0)
+                                continue;
+                            var obj3 = obj2[0]["desc"]["dynamic_id"].ToString();
 
-                                if (ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
-                                {
-                                    if (ConfigUtils.UidLast.Dynamic[item1] == obj3)
-                                        continue;
-                                    else
-                                        ConfigUtils.UidLast.Dynamic[item1] = obj3;
-                                    save = true;
-                                }
-                                else
-                                {
-                                    ConfigUtils.UidLast.Dynamic.Add(item1, obj3);
-                                    save = true;
-                                }
-                                
-                                var data1 = HttpUtils.GetDynamic(obj3);
-                                if (data1 == null)
-                                {
-                                    continue;
-                                }
-                                string temp1 = DynamicPicGen.Gen(data1);
-                                Program.Log($"已生成{temp1}");
-                                Program.SendGroupImage(temp1, group);
-                            }
-                            catch (Exception e)
+                            if (ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
                             {
-                                Program.Error(e);
+                                if (ConfigUtils.UidLast.Dynamic[item1] == obj3)
+                                    continue;
+                                else
+                                    ConfigUtils.UidLast.Dynamic[item1] = obj3;
+                                save = true;
+                            }
+                            else
+                            {
+                                ConfigUtils.UidLast.Dynamic.Add(item1, obj3);
+                                save = true;
+                            }
+
+                            var data1 = HttpUtils.GetDynamic(obj3);
+                            if (data1 == null)
+                            {
+                                continue;
+                            }
+                            string temp1 = DynamicPicGen.Gen(data1);
+                            Program.Log($"已生成{temp1}");
+                            foreach (var item2 in item.Value)
+                            {
+                                Program.SendGroupImage(temp1, item2);
                             }
                         }
-                        foreach (var item1 in obj.Lives)
+                        catch (Exception e)
                         {
-                            try
-                            {
-                                var obj1 = HttpUtils.GetLiveUID(item1);
-                                Thread.Sleep(ConfigUtils.Config.CheckDelay);
-                                if (!IsRun)
-                                    return;
-                                if (obj1 == null)
-                                    continue;
-                                var obj2 = (int)obj1["data"]["roomStatus"];
-                                if (obj2 == 0)
-                                    continue;
-                                bool obj3 = (int)obj1["data"]["liveStatus"] == 1;
+                            Program.Error(e);
+                        }
+                    }
+                    foreach (var item in ConfigUtils.Subscribes.Lives)
+                    {
+                        try
+                        {
+                            var item1 = item.Key;
+                            var obj1 = HttpUtils.GetLiveUID(item1);
+                            Thread.Sleep(ConfigUtils.Config.CheckDelay);
+                            if (!IsRun)
+                                return;
+                            if (obj1 == null)
+                                continue;
+                            var obj2 = (int)obj1["data"]["roomStatus"];
+                            if (obj2 == 0)
+                                continue;
+                            bool obj3 = (int)obj1["data"]["liveStatus"] == 1;
 
-                                if (ConfigUtils.UidLast.Live.ContainsKey(item1))
-                                {
-                                    if (ConfigUtils.UidLast.Live[item1] == obj3)
-                                        continue;
-                                    else
-                                        ConfigUtils.UidLast.Live[item1] = obj3;
-                                    save = true;
-                                }
+                            if (ConfigUtils.UidLast.Live.ContainsKey(item1))
+                            {
+                                if (ConfigUtils.UidLast.Live[item1] == obj3)
+                                    continue;
                                 else
-                                {
-                                    ConfigUtils.UidLast.Live.Add(item1, obj3);
-                                    save = true;
-                                }
-                                if (!obj3)
-                                    continue;
-
-                                var data1 = HttpUtils.GetLive(obj1["data"]["roomid"].ToString());
-                                if (data1 == null)
-                                {
-                                    continue;
-                                }
-                                string temp1 = LivePicGen.Gen(data1);
-                                Program.Log($"已生成{temp1}");
-                                Program.SendGroupImage(temp1, group);
+                                    ConfigUtils.UidLast.Live[item1] = obj3;
+                                save = true;
                             }
-                            catch (Exception e)
+                            else
                             {
-                                Program.Error(e);
+                                ConfigUtils.UidLast.Live.Add(item1, obj3);
+                                save = true;
                             }
+                            if (!obj3)
+                                continue;
+
+                            var data1 = HttpUtils.GetLive(obj1["data"]["roomid"].ToString());
+                            if (data1 == null)
+                            {
+                                continue;
+                            }
+                            string temp1 = LivePicGen.Gen(data1);
+                            Program.Log($"已生成{temp1}");
+                            foreach (var item2 in item.Value)
+                            {
+                                Program.SendGroupImage(temp1, item2);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Program.Error(e);
                         }
                     }
                     if (save)

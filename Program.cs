@@ -4,6 +4,7 @@ using BotBiliBili.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BotBiliBili
@@ -33,8 +34,8 @@ namespace BotBiliBili
             };
             robot = new();
             robot.Set(RobotConfig);
-            robot.Start();
-            CheckThread.Start();
+            //robot.Start();
+            //CheckThread.Start();
             while (true)
             {
                 string temp = Console.ReadLine();
@@ -538,25 +539,21 @@ namespace BotBiliBili
                                 break;
                             }
                             Log($"群:{pack.id} 订阅UP主:{comm} 的动态");
-                            if (ConfigUtils.Subscribes.ContainsKey(pack.id))
+                            if (ConfigUtils.Subscribes.Uids.ContainsKey(comm))
                             {
-                                SubscribeObj obj = ConfigUtils.Subscribes[pack.id];
-                                if (obj.Uids.Contains(comm))
+                                var list = ConfigUtils.Subscribes.Uids[comm];
+                                if (list.Contains(pack.id))
                                 {
                                     SendGroupMessage("已经订阅过了", pack.id);
                                     break;
                                 }
-                                obj.Uids.Add(comm);
+                                list.Add(pack.id);
                             }
                             else
                             {
-                                SubscribeObj obj = new()
-                                {
-                                    Uids = new(),
-                                    Lives = new()
-                                };
-                                obj.Uids.Add(comm);
-                                ConfigUtils.Subscribes.TryAdd(pack.id, obj);
+                                List<long> list = new();
+                                list.Add(pack.id);
+                                ConfigUtils.Subscribes.Uids.TryAdd(comm, list);
                             }
                             SendGroupMessage("订阅成功", pack.id);
                             ConfigUtils.SaveSubscribe();
@@ -580,25 +577,21 @@ namespace BotBiliBili
                                 break;
                             }
                             Log($"群:{pack.id} 订阅UP主:{comm} 的直播");
-                            if (ConfigUtils.Subscribes.ContainsKey(pack.id))
+                            if (ConfigUtils.Subscribes.Lives.ContainsKey(comm))
                             {
-                                SubscribeObj obj = ConfigUtils.Subscribes[pack.id];
-                                if (obj.Lives.Contains(comm))
+                                var list = ConfigUtils.Subscribes.Lives[comm];
+                                if (list.Contains(pack.id))
                                 {
                                     SendGroupMessage("已经订阅过了", pack.id);
                                     break;
                                 }
-                                obj.Lives.Add(comm);
+                                list.Add(pack.id);
                             }
                             else
                             {
-                                SubscribeObj obj = new()
-                                {
-                                    Uids = new(),
-                                    Lives = new()
-                                };
-                                obj.Lives.Add(comm);
-                                ConfigUtils.Subscribes.TryAdd(pack.id, obj);
+                                List<long> list = new();
+                                list.Add(pack.id);
+                                ConfigUtils.Subscribes.Lives.TryAdd(comm, list);
                             }
                             SendGroupMessage("订阅成功", pack.id);
                             ConfigUtils.SaveSubscribe();
