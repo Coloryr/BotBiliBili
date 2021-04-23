@@ -61,7 +61,7 @@ namespace BotBiliBili.Utils
         }
         public static bool IsNumeric(string value)
         {
-            return Regex.IsMatch(value, @"^[+-]?/d*[.]?/d*$");
+            return Regex.IsMatch(value, "^[0-9]*$");
         }
     }
 }

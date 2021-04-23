@@ -300,7 +300,7 @@ namespace BotBiliBili
                                 break;
                             }
                             string comm = temp[2];
-                            if (Tools.IsNumeric(comm))
+                            if (!Tools.IsNumeric(comm))
                             {
                                 SendGroupMessage("错误的动态号", pack.id);
                                 break;
@@ -336,32 +336,29 @@ namespace BotBiliBili
                             string comm = temp[2];
                             if (!Tools.IsNumeric(comm))
                             {
-                                Log($"正在生成动态:{comm}的图片");
-                                Task.Run(() =>
-                                {
-                                    try
-                                    {
-                                        var data1 = HttpUtils.GetDynamicUid(temp[2]);
-                                        if (data1 == null)
-                                        {
-                                            SendGroupMessage($"获取不到动态：{comm}", pack.id);
-                                            return;
-                                        }
-                                        string temp1 = DynamicPicGen.Gen(data1);
-                                        Log($"已生成{temp1}");
-                                        SendGroupImage(temp1, pack.id);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Error(e);
-                                    }
-                                });
-                            }
-                            else
-                            {
                                 SendGroupMessage("错误的UP主号", pack.id);
                                 break;
                             }
+                            Log($"正在生成动态:{comm}的图片");
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    var data1 = HttpUtils.GetDynamicUid(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到动态：{comm}", pack.id);
+                                        return;
+                                    }
+                                    string temp1 = DynamicPicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
+                                    SendGroupImage(temp1, pack.id);
+                                }
+                                catch (Exception e)
+                                {
+                                    Error(e);
+                                }
+                            });
                         }
                         else if (temp[1] == ConfigUtils.Config.Command.DynamicName)
                         {
@@ -413,7 +410,7 @@ namespace BotBiliBili
                                 break;
                             }
                             string comm = temp[2].ToLower();
-                            if (Tools.IsNumeric(comm))
+                            if (!Tools.IsNumeric(comm))
                             {
                                 SendGroupMessage("错误的直播号", pack.id);
                                 break;
@@ -447,7 +444,7 @@ namespace BotBiliBili
                                 break;
                             }
                             string comm = temp[2];
-                            if (Tools.IsNumeric(comm))
+                            if (!Tools.IsNumeric(comm))
                             {
                                 SendGroupMessage("错误的UID", pack.id);
                                 break;
@@ -535,7 +532,7 @@ namespace BotBiliBili
                                 break;
                             }
                             string comm = temp[2];
-                            if (Tools.IsNumeric(comm))
+                            if (!Tools.IsNumeric(comm))
                             {
                                 SendGroupMessage("错误的UID", pack.id);
                                 break;
@@ -559,6 +556,7 @@ namespace BotBiliBili
                                     Lives = new()
                                 };
                                 obj.Uids.Add(comm);
+                                ConfigUtils.Subscribes.TryAdd(pack.id, obj);
                             }
                             SendGroupMessage("订阅成功", pack.id);
                             ConfigUtils.SaveSubscribe();
@@ -576,7 +574,7 @@ namespace BotBiliBili
                                 break;
                             }
                             string comm = temp[2];
-                            if (Tools.IsNumeric(comm))
+                            if (!Tools.IsNumeric(comm))
                             {
                                 SendGroupMessage("错误的UID", pack.id);
                                 break;
@@ -600,6 +598,7 @@ namespace BotBiliBili
                                     Lives = new()
                                 };
                                 obj.Lives.Add(comm);
+                                ConfigUtils.Subscribes.TryAdd(pack.id, obj);
                             }
                             SendGroupMessage("订阅成功", pack.id);
                             ConfigUtils.SaveSubscribe();
