@@ -433,6 +433,89 @@ namespace BotBiliBili
                                 }
                             });
                         }
+                        else if (temp[1] == ConfigUtils.Config.Command.LiveUid)
+                        {
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (Tools.IsNumeric(comm))
+                            {
+                                SendGroupMessage("错误的UID", pack.id);
+                                break;
+                            }
+                            Log($"正在生成直播:{comm}的图片");
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    var data1 = HttpUtils.GetLiveUID(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到用户直播间：{comm}", pack.id);
+                                        return;
+                                    }
+                                    string room = data1["data"]["roomid"].ToString();
+                                    data1 = HttpUtils.GetLive(room);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到直播间：{room}", pack.id);
+                                        return;
+                                    }
+                                    string temp1 = LivePicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
+                                    SendGroupImage(temp1, pack.id);
+                                }
+                                catch (Exception e)
+                                {
+                                    Error(e);
+                                }
+                            });
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.LiveName)
+                        {
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            Log($"正在生成直播:{comm}的图片");
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    var data1 = HttpUtils.SearchLive(temp[2]);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"搜索不到直播间：{comm}", pack.id);
+                                        return;
+                                    }
+                                    var data2 = data1["data"]["result"]["live_room"] as JArray;
+                                    if (data2.Count == 0)
+                                    {
+                                        SendGroupMessage($"搜索：{comm} 没有结果", pack.id);
+                                        return;
+                                    }
+                                    string room = data2[0]["roomid"].ToString();
+                                    data1 = HttpUtils.GetLive(room);
+                                    if (data1 == null)
+                                    {
+                                        SendGroupMessage($"获取不到直播间：{room}", pack.id);
+                                        return;
+                                    }
+                                    string temp1 = LivePicGen.Gen(data1);
+                                    Log($"已生成{temp1}");
+                                    SendGroupImage(temp1, pack.id);
+                                }
+                                catch (Exception e)
+                                {
+                                    Error(e);
+                                }
+                            });
+                        }
                     }
 
                     break;
