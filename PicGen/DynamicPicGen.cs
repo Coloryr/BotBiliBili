@@ -120,10 +120,17 @@ namespace BotBiliBili.PicGen
         private static void Type8(JObject data, ref Bitmap bitmap, ref Graphics graphics)
         {
             string dynamic = data["dynamic"].ToString();
+            string desc = data["desc"].ToString();
             if (dynamic.Length == 0)
                 dynamic = "发布视频：";
-            else
-                dynamic = "发布视频：\n" + dynamic;
+            else 
+            {
+                if (dynamic != desc)
+                    dynamic = "发布视频：\n" + dynamic;
+                else
+                    dynamic = "发布视频：";
+            }
+
             string temp1;
             string[] list = dynamic.Split("\n");
             int d = 0;
@@ -214,8 +221,6 @@ namespace BotBiliBili.PicGen
             NowY += pic1.Height + Config.PicPid;
 
             pic1.Dispose();
-
-            string desc = data["desc"].ToString();
 
             int AllLength = (desc.Length / Config.TextLim + 2 +
                 Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
@@ -332,7 +337,15 @@ namespace BotBiliBili.PicGen
 
         private static void Type2(JObject data1, ref Bitmap bitmap, ref Graphics graphics, float y = 0)
         {
+
             float xPos = Config.PicStart.X, yPos = y == 0 ? Config.PicStart.Y : y;
+
+            graphics.DrawString("发布动态：", text_font, text_color, Config.TextX, yPos);
+
+            yPos += Config.TextDeviation + 10;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, yPos, Config.Width - Config.PicStart.X * 2, 2);
+            yPos += 18;
+
             if (data1["item"]["pictures"] is JArray array)
             {
                 for (int a = 0; a < array.Count; a++)

@@ -20,6 +20,12 @@ namespace BotBiliBili
             RunLocal = AppContext.BaseDirectory;
             logs = new Logs(RunLocal);
             Reload();
+            if (ConfigUtils.Config.RunQQ == 0 || ConfigUtils.Config.RunGroup.Count == 0)
+            {
+                Console.WriteLine("运行QQ和运行群未设置");
+                Console.Read();
+                return;
+            }
             RobotConfig = new()
             {
                 IP = ConfigUtils.Config.IP,
