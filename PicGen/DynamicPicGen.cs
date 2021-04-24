@@ -88,7 +88,7 @@ namespace BotBiliBili.PicGen
             graphics.DrawImage(code, Config.QPos.X, Config.QPos.Y,
                 Config.QSize, Config.QSize);
 
-            DateTime startTime = new(1970, 1, 1);
+            DateTime startTime = new(1970, 1, 1, 8, 0, 0);
             DateTime dt = startTime.AddSeconds((long)data["desc"]["timestamp"]);
             string temp = dt.ToString("yyyy/MM/dd HH:mm:ss");
             graphics.DrawString($"{temp}  观看:{data["desc"]["view"]}  点赞:{data["desc"]["like"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
