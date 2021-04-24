@@ -44,32 +44,45 @@ namespace BotBiliBili
                             var obj2 = obj1["data"]["cards"] as JArray;
                             if (obj2.Count == 0)
                                 continue;
-                            var obj3 = obj2[0]["desc"]["dynamic_id"].ToString();
-
-                            if (ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
+                            string first = obj2[0]["desc"]["dynamic_id"].ToString();
+                            if (!ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
                             {
-                                if (ConfigUtils.UidLast.Dynamic[item1] == obj3)
-                                    continue;
-                                else
-                                    ConfigUtils.UidLast.Dynamic[item1] = obj3;
+                                ConfigUtils.UidLast.Dynamic.Add(item1, first);
                                 save = true;
+                                var data1 = HttpUtils.GetDynamic(first);
+                                if (data1 == null)
+                                {
+                                    continue;
+                                }
+                                string temp1 = DynamicPicGen.Gen(data1);
+                                Program.Log($"已生成{temp1}");
+                                foreach (var item3 in item.Value)
+                                {
+                                    Program.SendGroupImage(temp1, item3);
+                                }
                             }
                             else
                             {
-                                ConfigUtils.UidLast.Dynamic.Add(item1, obj3);
-                                save = true;
-                            }
+                                foreach (var item2 in obj2)
+                                {
+                                    var obj3 = item2["desc"]["dynamic_id"].ToString();
+                                    if (ConfigUtils.UidLast.Dynamic[item1] == obj3)
+                                        break;
+                                    var data1 = HttpUtils.GetDynamic(obj3);
+                                    if (data1 == null)
+                                    {
+                                        continue;
+                                    }
+                                    string temp1 = DynamicPicGen.Gen(data1);
+                                    Program.Log($"已生成{temp1}");
+                                    foreach (var item3 in item.Value)
+                                    {
+                                        Program.SendGroupImage(temp1, item3);
+                                    }
 
-                            var data1 = HttpUtils.GetDynamic(obj3);
-                            if (data1 == null)
-                            {
-                                continue;
-                            }
-                            string temp1 = DynamicPicGen.Gen(data1);
-                            Program.Log($"已生成{temp1}");
-                            foreach (var item2 in item.Value)
-                            {
-                                Program.SendGroupImage(temp1, item2);
+                                }
+                                ConfigUtils.UidLast.Dynamic[item1] = first;
+                                save = true;
                             }
                         }
                         catch (Exception e)
