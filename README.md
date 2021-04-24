@@ -63,3 +63,24 @@
   }
 }
 ```
+- `IP`：机器人IP
+- `Port`：端口
+- `RunQQ`：运行的QQ
+- `RunGroup`：运行群号
+- `SESSDATA`：B站cookie
+- `bili_jct`：B站cookie
+- `Command`：命令
+  - `Head`：命令头
+  - `Help`：帮助指令
+  - `Video`：视频指令
+  - `VideoName`：视频指令
+- `CheckDelay`：爬虫延迟（毫秒）
+- `TimeOut`：爬虫超时时间（秒）
+- `AdminSubscribeOnly`：是否管理员才能订阅
+- `WaitTime`：爬虫冷却时间（秒）
+- `RequestHeaders`：爬虫请求头
+
+2. `video.json`视频图片配置
+```
+
+```
