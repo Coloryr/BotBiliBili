@@ -29,7 +29,7 @@ namespace BotBiliBili
                 try
                 {
                     bool save = false;
-                    foreach (var item in ConfigUtils.Subscribes.Lives)
+                    foreach (var item in ConfigUtils.Subscribes.Uids)
                     {
                         try
                         {
@@ -79,7 +79,6 @@ namespace BotBiliBili
                                     {
                                         Program.SendGroupImage(temp1, item3);
                                     }
-
                                 }
                                 ConfigUtils.UidLast.Dynamic[item1] = first;
                                 save = true;
