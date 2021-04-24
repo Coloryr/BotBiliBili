@@ -34,6 +34,7 @@ namespace BotBiliBili
                         try
                         {
                             var item1 = item.Key;
+                            Program.Log($"检查用户{item1}动态");
                             var obj1 = HttpUtils.GetDynamicUid(item1);
                             Thread.Sleep(ConfigUtils.Config.CheckDelay);
                             if (!IsRun)
@@ -81,6 +82,7 @@ namespace BotBiliBili
                         try
                         {
                             var item1 = item.Key;
+                            Program.Log($"检查用户{item1}直播");
                             var obj1 = HttpUtils.GetLiveUID(item1);
                             Thread.Sleep(ConfigUtils.Config.CheckDelay);
                             if (!IsRun)
@@ -128,6 +130,13 @@ namespace BotBiliBili
                     if (save)
                     {
                         ConfigUtils.SaveTemp();
+                    }
+                    Program.Log("检查暂停");
+                    for (int a = 0; a < ConfigUtils.Config.WaitTime; a++)
+                    {
+                        Thread.Sleep(1000);
+                        if (!IsRun)
+                            return;
                     }
                 }
                 catch (Exception e)

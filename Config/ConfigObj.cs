@@ -15,6 +15,7 @@ namespace BotBiliBili.Config
         public int CheckDelay { get; set; }
         public int TimeOut { get; set; }
         public bool AdminSubscribeOnly { get; set; }
+        public int WaitTime { get; set; }
         public Dictionary<string, string> RequestHeaders { get; set; }
     }
     public class UidLastSave
