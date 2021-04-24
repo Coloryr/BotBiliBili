@@ -104,7 +104,7 @@ namespace BotBiliBili.PicGen
             DateTime startTime = new(1970, 1, 1);
             DateTime dt = startTime.AddSeconds((long)data["room_info"]["live_start_time"]);
             string temp = dt.ToString("HH:mm:ss");
-            graphics.DrawString($"开播时长:{temp}  观看:{data["room_info"]["online"]}  分区:{data["room_info"]["area_name"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
+            graphics.DrawString($"开播时间:{temp}  观看:{data["room_info"]["online"]}  分区:{data["room_info"]["area_name"]}", state_font, state_color, Config.StatePos.X, Config.StatePos.Y);
 
             temp = data["room_info"]["title"].ToString();
 

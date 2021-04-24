@@ -186,16 +186,16 @@ namespace BotBiliBili
                         if (temp[1] == ConfigUtils.Config.Command.Help)
                         {
                             SendGroupMessage("BotBiliBili帮助\n" +
-                                $"{ConfigUtils.Config.Command.Video} [视频号] 生成视频图片，AV号BV号均可\n" +
-                                $"{ConfigUtils.Config.Command.VideoName} [视频名] 生成搜索后的视频图片\n" +
-                                $"{ConfigUtils.Config.Command.Dynamic} [动态号] 生成动态图片\n" +
-                                $"{ConfigUtils.Config.Command.DynamicUser} [UP的UID] 生成UP主最新动态图片\n" +
-                                $"{ConfigUtils.Config.Command.DynamicName} [UP的名字] 生成UP主最新动态图片\n" +
-                                $"{ConfigUtils.Config.Command.Live} [房间号] 生成直播间图片\n" +
-                                $"{ConfigUtils.Config.Command.LiveName} [UP主名字] 生成UP主的直播间图片\n" +
-                                $"{ConfigUtils.Config.Command.LiveUid} [UID] 生成UP主的直播间图片\n" +
-                                $"{ConfigUtils.Config.Command.SubscribeUid} [UID] 订阅UP主的动态\n" +
-                                $"{ConfigUtils.Config.Command.SubscribeLive} [UID] 订阅UP主的直播", pack.id);
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.Video} [视频号] 生成视频图片，AV号BV号均可\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.VideoName} [视频名] 生成搜索后的视频图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.Dynamic} [动态号] 生成动态图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.DynamicUser} [UP的UID] 生成UP主最新动态图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.DynamicName} [UP的名字] 生成UP主最新动态图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.Live} [房间号] 生成直播间图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.LiveName} [UP主名字] 生成UP主的直播间图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.LiveUid} [UID] 生成UP主的直播间图片\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.SubscribeUid} [UID] 订阅UP主的动态\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.SubscribeLive} [UID] 订阅UP主的直播", pack.id);
                             break;
                         }
                         else if (temp[1] == ConfigUtils.Config.Command.Video)
