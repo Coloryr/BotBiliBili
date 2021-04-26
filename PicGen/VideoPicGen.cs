@@ -116,7 +116,7 @@ namespace BotBiliBili.PicGen
 
             pic_url = data["pic"].ToString();
             using Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
-            graphics.DrawImage(Tools.ZoomImage(pic1, 
+            graphics.DrawImage(Tools.ZoomImage(pic1,
                 Config.PicHeight, Config.PicWidth), Config.PicPos.X, Config.PicPos.Y);
 
             temp = data["desc"].ToString();

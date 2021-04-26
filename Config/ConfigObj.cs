@@ -24,7 +24,7 @@ namespace BotBiliBili.Config
         public Dictionary<string, bool> Live { get; set; }
     }
     public class SubscribeObj
-    { 
+    {
         public ConcurrentDictionary<string, List<long>> Uids { get; set; }
         public ConcurrentDictionary<string, List<long>> Lives { get; set; }
     }

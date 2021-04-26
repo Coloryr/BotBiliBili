@@ -1,8 +1,4 @@
-﻿using BotBiliBili.PicGen;
-using Newtonsoft.Json;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using Newtonsoft.Json;
 using System.IO;
 
 namespace BotBiliBili.Config

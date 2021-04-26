@@ -2,14 +2,10 @@
 using BotBiliBili.Utils;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BotBiliBili.PicGen
 {
@@ -105,8 +101,10 @@ namespace BotBiliBili.PicGen
                 case 8:
                     Type8(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                     break;
+                case 2048:
+                    Type2048(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
+                    break;
             }
-
 
             temp = $"Dynamic/{id}.jpg";
 
@@ -123,7 +121,7 @@ namespace BotBiliBili.PicGen
             string desc = data["desc"].ToString();
             if (dynamic.Length == 0)
                 dynamic = "发布视频：";
-            else 
+            else
             {
                 if (dynamic != desc)
                     dynamic = "发布视频：\n" + dynamic;
@@ -324,7 +322,7 @@ namespace BotBiliBili.PicGen
                 }
             }
             NowY += Config.TextDeviation + 10;
-            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X , NowY, Config.Width - Config.PicStart.X * 2, 2);
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
             var origin_user = data["origin_user"] as JObject;
@@ -396,6 +394,134 @@ namespace BotBiliBili.PicGen
             string temp1;
             string[] list = temp.Split("\n");
             int d = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    float NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                        break;
+                }
+            }
+        }
+
+        private static void Type2048(JObject data1, ref Bitmap bitmap, ref Graphics graphics, float y = 0)
+        {
+
+            float xPos = Config.PicStart.X, yPos = y == 0 ? Config.PicStart.Y : y;
+
+            graphics.DrawString("哔哩哔哩漫画社区精选：", text_font, text_color, Config.TextX, yPos);
+
+            yPos += Config.TextDeviation + 10;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, yPos, Config.Width - Config.PicStart.X * 2, 2);
+            yPos += 18;
+
+            string pic_url1 = data1["sketch"]["cover_url"].ToString();
+            Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url1)) as Bitmap;
+            int Width = (int)(Config.Width * 0.2);
+            pic1 = Tools.ZoomImage(pic1, pic1.Height, Width);
+            if (yPos + pic1.Height > bitmap.Height)
+            {
+                graphics.Save();
+                Bitmap bitmap1 = new(Config.Width, (int)(yPos + pic1.Height));
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+            graphics.DrawImage(pic1, xPos,
+               yPos, pic1.Width, pic1.Height);
+            yPos += Config.PicPid;
+
+            string temp = data1["sketch"]["desc_text"].ToString();
+
+            int AllLength = (temp.Length / Config.TextLim + 2 - 15 +
+                Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
+            if (AllLength > bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, AllLength);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+
+            string temp1;
+            string[] list = temp.Split("\n");
+            int d = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    float NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim - 15 + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim - 15 + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft - Width - Config.TextPid)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim - 15 + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, xPos + Width + Config.TextPid, NowY);
+                    a++;
+                    if (last)
+                        break;
+                }
+            }
+
+            temp = data1["vest"]["content"].ToString();
+            list = temp.Split("\n");
+            d = 0;
+            yPos += pic1.Height;
+            pic1.Dispose();
             foreach (var item in list)
             {
                 int a = 0;
