@@ -129,51 +129,15 @@ namespace BotBiliBili
                     bool save = false;
                     foreach (var item in ConfigUtils.Subscribes.Uids)
                     {
-                        try
-                        {
-                            if (!IsRun)
-                                return;
-                            save = GetDynamic(item);
-                        }
-                        catch
-                        {
-                            Program.Error($"获取{item.Key}动态错误，进行重试");
-                            if (!IsRun)
-                                return;
-                            try
-                            {
-                                save = GetDynamic(item);
-                            }
-                            catch (Exception e)
-                            {
-                                Program.Error($"获取{item.Key}动态失败");
-                                Program.Error(e);
-                            }
-                        }
+                        if (!IsRun)
+                            return;
+                        save = GetDynamic(item);
                     }
                     foreach (var item in ConfigUtils.Subscribes.Lives)
                     {
-                        try
-                        {
-                            if (!IsRun)
-                                return;
-                            save = GetLive(item);
-                        }
-                        catch
-                        {
-                            Program.Error($"获取{item.Key}直播错误，进行重试");
-                            if (!IsRun)
-                                return;
-                            try
-                            {
-                                save = GetLive(item);
-                            }
-                            catch (Exception e)
-                            {
-                                Program.Error($"获取{item.Key}直播失败");
-                                Program.Error(e);
-                            }
-                        }
+                        if (!IsRun)
+                            return;
+                        save = GetLive(item);
                     }
                     if (save)
                     {

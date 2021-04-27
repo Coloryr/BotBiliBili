@@ -124,6 +124,11 @@ namespace BotBiliBili.Utils
                     Program.Error($"获取动态信息失败:{obj["message"]}");
                     return null;
                 }
+                else if (obj["data"]["card"] == null && obj["data"]["cards"] == null)
+                {
+                    Program.Error($"获取动态信息失败:动态已删除");
+                    return null;
+                }
                 return obj;
             }
             catch (Exception e)
