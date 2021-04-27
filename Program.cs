@@ -195,7 +195,9 @@ namespace BotBiliBili
                                 $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.LiveName} [UP主名字] 生成UP主的直播间图片\n" +
                                 $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.LiveUid} [UID] 生成UP主的直播间图片\n" +
                                 $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.SubscribeUid} [UID] 订阅UP主的动态\n" +
-                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.SubscribeLive} [UID] 订阅UP主的直播", pack.id);
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.SubscribeLive} [UID] 订阅UP主的直播\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.UnSubscribeUid} [UID] 取消订阅UP主的动态\n" +
+                                $"{ConfigUtils.Config.Command.Head} {ConfigUtils.Config.Command.UnSubscribeLive} [UID] 取消订阅UP主的直播", pack.id);
                             break;
                         }
                         else if (temp[1] == ConfigUtils.Config.Command.Video)
@@ -602,8 +604,87 @@ namespace BotBiliBili
                             SendGroupMessage("订阅成功", pack.id);
                             ConfigUtils.SaveSubscribe();
                         }
+                        else if (temp[1] == ConfigUtils.Config.Command.UnSubscribeUid)
+                        {
+                            if (ConfigUtils.Config.AdminSubscribeOnly)
+                            {
+                                if (pack.permission == MemberPermission.MEMBER)
+                                    break;
+                            }
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (!Tools.IsNumeric(comm))
+                            {
+                                SendGroupMessage("错误的UID", pack.id);
+                                break;
+                            }
+                            Log($"群:{pack.id} 订阅UP主:{comm} 的动态");
+                            if (ConfigUtils.Subscribes.Uids.ContainsKey(comm))
+                            {
+                                var list = ConfigUtils.Subscribes.Uids[comm];
+                                if (list.Contains(pack.id))
+                                {
+                                    list.Remove(pack.id);
+                                    SendGroupMessage("取消订阅成功", pack.id);
+                                    ConfigUtils.SaveSubscribe();
+                                    break;
+                                }
+                                else
+                                {
+                                    SendGroupMessage("没有订阅过", pack.id);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                SendGroupMessage("没有订阅过", pack.id);
+                            }
+                        }
+                        else if (temp[1] == ConfigUtils.Config.Command.UnSubscribeLive)
+                        {
+                            if (ConfigUtils.Config.AdminSubscribeOnly)
+                            {
+                                if (pack.permission == MemberPermission.MEMBER)
+                                    break;
+                            }
+                            if (temp.Length == 2)
+                            {
+                                SendGroupMessage("错误的参数", pack.id);
+                                break;
+                            }
+                            string comm = temp[2];
+                            if (!Tools.IsNumeric(comm))
+                            {
+                                SendGroupMessage("错误的UID", pack.id);
+                                break;
+                            }
+                            Log($"群:{pack.id} 订阅UP主:{comm} 的直播");
+                            if (ConfigUtils.Subscribes.Lives.ContainsKey(comm))
+                            {
+                                var list = ConfigUtils.Subscribes.Lives[comm];
+                                if (list.Contains(pack.id))
+                                {
+                                    list.Remove(pack.id);
+                                    SendGroupMessage("取消订阅成功", pack.id);
+                                    ConfigUtils.SaveSubscribe();
+                                    break;
+                                }
+                                else
+                                {
+                                    SendGroupMessage("没有订阅过", pack.id);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                SendGroupMessage("没有订阅过", pack.id);
+                            }
+                        }
                     }
-
                     break;
             }
         }

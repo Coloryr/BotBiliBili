@@ -53,7 +53,9 @@
     "LiveName": "nlive",
     "LiveUid": "ulive",
     "SubscribeUid": "suid",
-    "SubscribeLive": "slive"
+    "SubscribeLive": "slive",
+    "UnSubscribeUid": "duid",
+    "UnSubscribeLive": "dlive"
   },
   "CheckDelay": 1000,
   "TimeOut": 10,
@@ -83,6 +85,8 @@
   - `LiveUid`：直播指令
   - `SubscribeUid`：订阅动态指令
   - `SubscribeLive`：订阅直播指令
+  - `UnSubscribeUid`：取消订阅动态指令
+  - `UnSubscribeLive`：取消订阅直播指令
 - `CheckDelay`：爬虫延迟（毫秒）
 - `TimeOut`：爬虫超时时间（秒）
 - `AdminSubscribeOnly`：是否管理员才能订阅

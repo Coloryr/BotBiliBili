@@ -42,6 +42,8 @@ namespace BotBiliBili.Config
         public string LiveUid { get; set; }
         public string SubscribeUid { get; set; }
         public string SubscribeLive { get; set; }
+        public string UnSubscribeUid { get; set; }
+        public string UnSubscribeLive { get; set; }
     }
 
     public class GroupSave

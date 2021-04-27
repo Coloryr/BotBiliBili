@@ -68,7 +68,9 @@ namespace BotBiliBili.Config
                     LiveName = "nlive",
                     LiveUid = "ulive",
                     SubscribeUid = "suid",
-                    SubscribeLive = "slive"
+                    SubscribeLive = "slive",
+                    UnSubscribeUid = "duid",
+                    UnSubscribeLive = "dlive"
                 },
                 CheckDelay = 1000,
                 TimeOut = 10,
