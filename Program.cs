@@ -622,7 +622,7 @@ namespace BotBiliBili
                                 SendGroupMessage("错误的UID", pack.id);
                                 break;
                             }
-                            Log($"群:{pack.id} 订阅UP主:{comm} 的动态");
+                            Log($"群:{pack.id} 取消订阅UP主:{comm} 的动态");
                             if (ConfigUtils.Subscribes.Uids.ContainsKey(comm))
                             {
                                 var list = ConfigUtils.Subscribes.Uids[comm];
@@ -662,7 +662,7 @@ namespace BotBiliBili
                                 SendGroupMessage("错误的UID", pack.id);
                                 break;
                             }
-                            Log($"群:{pack.id} 订阅UP主:{comm} 的直播");
+                            Log($"群:{pack.id} 取消订阅UP主:{comm} 的直播");
                             if (ConfigUtils.Subscribes.Lives.ContainsKey(comm))
                             {
                                 var list = ConfigUtils.Subscribes.Lives[comm];
