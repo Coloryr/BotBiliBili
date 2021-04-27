@@ -12,6 +12,7 @@ namespace BotBiliBili
     {
         private static Thread thread;
         private static bool IsRun;
+        private static bool save;
         public static void Start()
         {
             thread = new(Task);
@@ -19,27 +20,26 @@ namespace BotBiliBili
             thread.Start();
         }
 
-        private static bool GetDynamic(KeyValuePair<string, List<long>> item)
+        private static void GetDynamic(KeyValuePair<string, List<long>> item)
         {
             var item1 = item.Key;
             Program.Log($"检查用户{item1}动态");
             var obj1 = HttpUtils.GetDynamicUid(item1);
             Thread.Sleep(ConfigUtils.Config.CheckDelay);
             if (!IsRun)
-                return false;
+                return;
             if (obj1 == null)
-                return false;
+                return;
             var obj2 = obj1["data"]["cards"] as JArray;
             if (obj2.Count == 0)
-                return false;
+                return;
             string first = obj2[0]["desc"]["dynamic_id"].ToString();
-            bool save = false;
             if (!ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
             {
                 var data1 = HttpUtils.GetDynamic(first);
                 if (data1 == null)
                 {
-                    return save;
+                    return;
                 }
                 ConfigUtils.UidLast.Dynamic.Add(item1, first);
                 save = true;
@@ -72,28 +72,26 @@ namespace BotBiliBili
                 ConfigUtils.UidLast.Dynamic[item1] = first;
                 save = true;
             }
-            return save;
         }
 
-        private static bool GetLive(KeyValuePair<string, List<long>> item)
+        private static void GetLive(KeyValuePair<string, List<long>> item)
         {
             var item1 = item.Key;
             Program.Log($"检查用户{item1}直播");
             var obj1 = HttpUtils.GetLiveUID(item1);
             Thread.Sleep(ConfigUtils.Config.CheckDelay);
             if (!IsRun)
-                return false;
+                return;
             if (obj1 == null)
-                return false;
+                return;
             var obj2 = (int)obj1["data"]["roomStatus"];
             if (obj2 == 0)
-                return false;
+                return;
             bool obj3 = (int)obj1["data"]["liveStatus"] == 1;
-            bool save;
             if (ConfigUtils.UidLast.Live.ContainsKey(item1))
             {
                 if (ConfigUtils.UidLast.Live[item1] == obj3)
-                    return false;
+                    return;
                 else
                     ConfigUtils.UidLast.Live[item1] = obj3;
                 save = true;
@@ -104,12 +102,12 @@ namespace BotBiliBili
                 save = true;
             }
             if (!obj3)
-                return save;
+                return;
 
             var data1 = HttpUtils.GetLive(obj1["data"]["roomid"].ToString());
             if (data1 == null)
             {
-                return save;
+                return;
             }
             string temp1 = LivePicGen.Gen(data1);
             Program.Log($"已生成{temp1}");
@@ -117,7 +115,6 @@ namespace BotBiliBili
             {
                 Program.SendGroupImage(temp1, item2);
             }
-            return save;
         }
 
         private static void Task()
@@ -126,18 +123,18 @@ namespace BotBiliBili
             {
                 try
                 {
-                    bool save = false;
+                    save = false;
                     foreach (var item in ConfigUtils.Subscribes.Uids)
                     {
                         if (!IsRun)
                             return;
-                        save = GetDynamic(item);
+                        GetDynamic(item);
                     }
                     foreach (var item in ConfigUtils.Subscribes.Lives)
                     {
                         if (!IsRun)
                             return;
-                        save = GetLive(item);
+                        GetLive(item);
                     }
                     if (save)
                     {
