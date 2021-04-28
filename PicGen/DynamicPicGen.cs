@@ -103,6 +103,9 @@ namespace BotBiliBili.PicGen
                     case 8:
                         Type8(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                         break;
+                    case 64:
+                        Type64(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
+                        break;
                     case 2048:
                         Type2048(JObject.Parse(data["card"].ToString()), ref bitmap, ref graphics);
                         break;
@@ -227,8 +230,16 @@ namespace BotBiliBili.PicGen
 
             pic1.Dispose();
 
-            int AllLength = (desc.Length / Config.TextLim + 2 +
+            int count = 0;
+            list = desc.Split("\n");
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+            int AllLength = (count +
                 Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
+
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);
@@ -301,8 +312,15 @@ namespace BotBiliBili.PicGen
             int d = 0;
             float NowY = y;
 
-            int AllLength = (dynamic.Length / Config.TextLim + 2 +
+            int count = 0;
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+            int AllLength = (count +
                 Tools.SubstringCount(dynamic, "\n")) * Config.TextDeviation + (int)NowY;
+
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);
@@ -353,11 +371,12 @@ namespace BotBiliBili.PicGen
                     }
                 }
             }
+
+            bitmap.Save("test.jpg");
+
             NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
-
-            bitmap.Save("test.jpg");
 
             string title = data["title"].ToString();
             int c = 0;
@@ -406,8 +425,16 @@ namespace BotBiliBili.PicGen
 
             pic1.Dispose();
 
-            AllLength = (desc.Length / Config.TextLim + 2 +
+            count = 0;
+            list = desc.Split("\n");
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+            AllLength = (count +
                 Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
+
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);
@@ -422,7 +449,6 @@ namespace BotBiliBili.PicGen
                 bitmap = bitmap1;
             }
 
-            list = desc.Split("\n");
             d = 0;
             float yPos = NowY;
             foreach (var item in list)
@@ -529,6 +555,10 @@ namespace BotBiliBili.PicGen
                 {
                     Type8(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
                 }
+                if (item_type == "2")
+                {
+                    Type2(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
+                }
                 if (item_type == "8")
                 {
                     Type8_1(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
@@ -591,7 +621,17 @@ namespace BotBiliBili.PicGen
             else
                 temp = "";
 
-            int AllLength = (temp.Length / Config.TextLim + 2 +
+            int count =0 ;
+            string[] list = temp.Split("\n");
+            foreach (var item in list)
+            {
+                if (string.IsNullOrWhiteSpace(item))
+                    continue;
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+
+            int AllLength = (count +
                 Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
             if (AllLength > bitmap.Height)
             {
@@ -608,7 +648,7 @@ namespace BotBiliBili.PicGen
             }
 
             string temp1;
-            string[] list = temp.Split("\n");
+            
             int d = 0;
             foreach (var item in list)
             {
@@ -679,7 +719,14 @@ namespace BotBiliBili.PicGen
 
             string temp = data1["sketch"]["desc_text"].ToString();
 
-            int AllLength = (temp.Length / Config.TextLim + 2 - 15 +
+            int count = 0;
+            string[] list = temp.Split("\n");
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+            int AllLength = (count +
                 Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
             if (AllLength > bitmap.Height)
             {
@@ -696,7 +743,6 @@ namespace BotBiliBili.PicGen
             }
 
             string temp1;
-            string[] list = temp.Split("\n");
             int d = 0;
             foreach (var item in list)
             {
@@ -781,7 +827,11 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString($"电影：{data["apiSeasonInfo"]["title"]}", text_font, text_color, Config.TextX, yPos);
 
-            yPos += Config.TextDeviation + 10;
+            yPos += Config.TextDeviation;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, yPos, Config.Width - Config.PicStart.X * 2, 2);
+            yPos += 18;
+
+            yPos += Config.TextDeviation;
 
             string pic_url = data["cover"].ToString();
             Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
@@ -802,6 +852,107 @@ namespace BotBiliBili.PicGen
                yPos, pic1.Width, pic1.Height);
 
             pic1.Dispose();
+        }
+
+        private static void Type64(JObject data, ref Bitmap bitmap, ref Graphics graphics, float y = 0)
+        {
+
+            float xPos = Config.PicStart.X, yPos = y == 0 ? Config.PicStart.Y : y;
+
+            graphics.DrawString($"游戏公告：", text_font, text_color, Config.TextX, yPos);
+
+            yPos += Config.TextDeviation;
+            graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, yPos, Config.Width - Config.PicStart.X * 2, 2);
+            yPos += 18;
+
+            if (data["image_urls"] is JArray array)
+            {
+                for (int a = 0; a < array.Count; a++)
+                {
+                    string pic_url1 = array[a].ToString();
+                    Bitmap pic1 = Image.FromStream(HttpUtils.GetData(pic_url1)) as Bitmap;
+                    pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
+                    if (yPos + pic1.Height > bitmap.Height)
+                    {
+                        graphics.Save();
+                        Bitmap bitmap1 = new(Config.Width, (int)(yPos + pic1.Height));
+                        graphics = Graphics.FromImage(bitmap1);
+                        graphics.InterpolationMode = InterpolationMode.High;
+                        graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                        graphics.Clear(back);
+                        graphics.DrawImage(bitmap, 0, 0);
+                        bitmap.Dispose();
+                        bitmap = bitmap1;
+                    }
+                    graphics.DrawImage(pic1, xPos,
+                       yPos, pic1.Width, pic1.Height);
+                    yPos += pic1.Height + Config.PicPid;
+
+                    pic1.Dispose();
+                }
+            }
+
+            string temp = data["summary"].ToString() + "...";
+
+            int count = 0;
+            string[] list = temp.Split("\n");
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.TextLim;
+                count += a == 0 ? 1 : a;
+            }
+            int AllLength = (count +
+                Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
+            if (AllLength > bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, AllLength);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+
+            string temp1;
+            int d = 0;
+            foreach (var item in list)
+            {
+                int a = 0;
+                int now = 0;
+                while (true)
+                {
+                    bool last = false;
+                    float NowY = yPos + d * Config.TextDeviation;
+                    d++;
+                    int b = 0;
+                    while (true)
+                    {
+                        if (now + Config.TextLim + b > item.Length)
+                        {
+                            temp1 = item[now..];
+                            last = true;
+                            break;
+                        }
+                        string temp2 = item.Substring(now, Config.TextLim + b);
+                        SizeF size = graphics.MeasureString(temp2, text_font);
+                        if (size.Width > Config.Width - Config.TextLeft)
+                        {
+                            temp1 = item.Substring(now, Config.TextLim + b - 1);
+                            now += temp1.Length;
+                            break;
+                        }
+                        b++;
+                    }
+                    graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
+                    a++;
+                    if (last)
+                        break;
+                }
+            }
         }
     }
 }
