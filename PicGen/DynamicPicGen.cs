@@ -237,7 +237,7 @@ namespace BotBiliBili.PicGen
                 int a = item.Length / Config.TextLim;
                 count += a == 0 ? 1 : a;
             }
-            int AllLength = (count +
+            int AllLength = (count + 2 +
                 Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
 
             if (AllLength > bitmap.Height)
@@ -318,7 +318,7 @@ namespace BotBiliBili.PicGen
                 int a = item.Length / Config.TextLim;
                 count += a == 0 ? 1 : a;
             }
-            int AllLength = (count +
+            int AllLength = (count + 2 +
                 Tools.SubstringCount(dynamic, "\n")) * Config.TextDeviation + (int)NowY;
 
             if (AllLength > bitmap.Height)
@@ -432,7 +432,7 @@ namespace BotBiliBili.PicGen
                 int a = item.Length / Config.TextLim;
                 count += a == 0 ? 1 : a;
             }
-            AllLength = (count +
+            AllLength = (count + 2 +
                 Tools.SubstringCount(desc, "\n")) * Config.TextDeviation + (int)NowY;
 
             if (AllLength > bitmap.Height)
@@ -631,7 +631,7 @@ namespace BotBiliBili.PicGen
                 count += a == 0 ? 1 : a;
             }
 
-            int AllLength = (count +
+            int AllLength = (count + 2 +
                 Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
             if (AllLength > bitmap.Height)
             {
@@ -726,8 +726,8 @@ namespace BotBiliBili.PicGen
                 int a = item.Length / Config.TextLim;
                 count += a == 0 ? 1 : a;
             }
-            int AllLength = (count +
-                Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
+            int AllLength = (count + 2 +
+               Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);
@@ -901,7 +901,7 @@ namespace BotBiliBili.PicGen
                 int a = item.Length / Config.TextLim;
                 count += a == 0 ? 1 : a;
             }
-            int AllLength = (count +
+            int AllLength = (count + 2 +
                 Tools.SubstringCount(temp, "\n")) * Config.TextDeviation + (int)yPos;
             if (AllLength > bitmap.Height)
             {
