@@ -47,6 +47,10 @@ namespace BotBiliBili.Config
 
         public static void LoadAll()
         {
+            if(!Directory.Exists(Program.RunLocal + "Config"))
+            { 
+                Directory.CreateDirectory(Program.RunLocal + "Config");
+            }
             Config = Load(new ConfigObj()
             {
                 IP = "127.0.0.1",
@@ -80,7 +84,7 @@ namespace BotBiliBili.Config
                 {
                     { "user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42" }
                 }
-            }, Program.RunLocal + "config.json");
+            }, Program.RunLocal + "Config/config.json");
 
             VideoPic = Load(new VideoSave()
             {
@@ -148,7 +152,7 @@ namespace BotBiliBili.Config
                 InfoLim = 20,
                 InfoDeviation = 40,
                 InfoLeft = 20
-            }, Program.RunLocal + "video.json");
+            }, Program.RunLocal + "Config/video.json");
 
             DynamicPic = Load(new DynamicSave()
             {
@@ -205,7 +209,7 @@ namespace BotBiliBili.Config
                 TextDeviation = 40,
                 TextLeft = 30,
                 TextLim = 20
-            }, Program.RunLocal + "dynamic.json");
+            }, Program.RunLocal + "Config/dynamic.json");
 
             LivePic = Load(new LiveSave()
             {
@@ -280,27 +284,27 @@ namespace BotBiliBili.Config
                 InfoColor = "#000000",
                 InfoLim = 20,
                 InfoDeviation = 40,
-            }, Program.RunLocal + "live.json");
+            }, Program.RunLocal + "Config/live.json");
 
             Subscribes = Load(new SubscribeObj()
             {
                 Lives = new(),
                 Uids = new()
-            }, Program.RunLocal + "subscribes.json");
+            }, Program.RunLocal + "Config/subscribes.json");
 
             UidLast = Load(new UidLastSave()
             {
                 Dynamic = new(),
                 Live = new()
-            }, Program.RunLocal + "temp.json");
+            }, Program.RunLocal + "Config/temp.json");
         }
         public static void SaveTemp()
         {
-            Save(UidLast, Program.RunLocal + "temp.json");
+            Save(UidLast, Program.RunLocal + "Config/temp.json");
         }
         public static void SaveSubscribe()
         {
-            Save(Subscribes, Program.RunLocal + "subscribes.json");
+            Save(Subscribes, Program.RunLocal + "Config/subscribes.json");
         }
     }
 }

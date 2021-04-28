@@ -22,7 +22,7 @@ namespace BotBiliBili
             Reload();
             if (ConfigUtils.Config.RunQQ == 0 || ConfigUtils.Config.RunGroup.Count == 0)
             {
-                Console.WriteLine("运行QQ和运行群未设置");
+                Console.WriteLine("运行QQ和运行群未设置，请设置后重启");
                 Console.Read();
                 return;
             }
