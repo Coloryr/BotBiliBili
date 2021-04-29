@@ -559,6 +559,10 @@ namespace BotBiliBili.PicGen
                 {
                     Type2(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
                 }
+                if (item_type == "64")
+                {
+                    Type64(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
+                }
                 if (item_type == "8")
                 {
                     Type8_1(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, NowY);
