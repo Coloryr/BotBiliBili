@@ -273,5 +273,10 @@ namespace BotBiliBili.Utils
         {
             return client.GetStreamAsync(url, cancellation.Token).Result;
         }
+
+        public static byte[] GetByte(string url)
+        {
+            return client.GetByteArrayAsync(url, cancellation.Token).Result;
+        }
     }
 }

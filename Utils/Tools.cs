@@ -1,11 +1,23 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace BotBiliBili.Utils
 {
     class Tools
     {
+        public static Bitmap GetImgUrl(string url)
+        {
+            if (url.EndsWith(".webp"))
+            {
+                var data = HttpUtils.GetByte(url);
+                return new WebP().Decode(data);
+            }
+            else
+                return Image.FromStream(HttpUtils.GetData(url)) as Bitmap;
+        }
         public static Bitmap ZoomImage(Bitmap bitmap, int destHeight, int destWidth)
         {
             try

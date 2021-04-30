@@ -69,7 +69,7 @@ namespace BotBiliBili.PicGen
             graphics.Clear(back);
 
             string pic_url = desc["user_profile"]["info"]["face"].ToString();
-            using Bitmap pic = Image.FromStream(HttpUtils.GetData(pic_url)) as Bitmap;
+            using Bitmap pic = Tools.GetImgUrl(pic_url);
 
             graphics.DrawImage(pic, Config.HeadPic.X,
                Config.HeadPic.Y,

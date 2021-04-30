@@ -10,9 +10,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="E:\NuGet\packages\webpdotnet\1.2.0.20210418\build\..\runtimes\win-AnyCPU\native\WebPDotNetNative.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="E:\NuGet\packages\dynamicweb.webp\2.0.0\build\libwebp_x64.dll" />
+    <None Remove="E:\NuGet\packages\dynamicweb.webp\2.0.0\build\libwebp_x86.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dynamicweb.WebP" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="QRCoder" Version="1.4.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Noesis.Drawing.Imaging.WebP">
+      <HintPath>Lib\Noesis.Drawing.Imaging.WebP.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
