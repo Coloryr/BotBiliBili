@@ -13,7 +13,10 @@ namespace BotBiliBili.Utils
             {
                 var data = HttpUtils.GetByte(url);
                 var data1 = new SimpleAnimDecoder().DecodeFromBytes(data);
-                return data1.Frames[new Random().Next(data1.FramesCount - 1)].Image as Bitmap;
+                if (data1.FramesCount == 1)
+                    return data1.Frames[0].Image as Bitmap;
+                else
+                    return data1.Frames[new Random().Next(data1.FramesCount - 1)].Image as Bitmap;
             }
             else
                 return Image.FromStream(HttpUtils.GetData(url)) as Bitmap;
