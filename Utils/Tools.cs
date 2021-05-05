@@ -1,7 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace BotBiliBili.Utils
@@ -13,7 +12,8 @@ namespace BotBiliBili.Utils
             if (url.EndsWith(".webp"))
             {
                 var data = HttpUtils.GetByte(url);
-                return new WebP().Decode(data);
+                var data1 = new SimpleAnimDecoder().DecodeFromBytes(data);
+                return data1.Frames[new Random().Next(data1.FramesCount - 1)].Image as Bitmap;
             }
             else
                 return Image.FromStream(HttpUtils.GetData(url)) as Bitmap;

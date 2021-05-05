@@ -47,8 +47,8 @@ namespace BotBiliBili.Config
 
         public static void LoadAll()
         {
-            if(!Directory.Exists(Program.RunLocal + "Config"))
-            { 
+            if (!Directory.Exists(Program.RunLocal + "Config"))
+            {
                 Directory.CreateDirectory(Program.RunLocal + "Config");
             }
             Config = Load(new ConfigObj()

@@ -625,7 +625,7 @@ namespace BotBiliBili.PicGen
             else
                 temp = "";
 
-            int count =0 ;
+            int count = 0;
             string[] list = temp.Split("\n");
             foreach (var item in list)
             {
@@ -652,7 +652,7 @@ namespace BotBiliBili.PicGen
             }
 
             string temp1;
-            
+
             int d = 0;
             foreach (var item in list)
             {
