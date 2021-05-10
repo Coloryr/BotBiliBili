@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace BotBiliBili.Config
@@ -18,9 +19,14 @@ namespace BotBiliBili.Config
         public int WaitTime { get; set; }
         public Dictionary<string, string> RequestHeaders { get; set; }
     }
+    public class DynamicObj
+    {
+        public string ID;
+        public long Time;
+    }
     public class UidLastSave
     {
-        public Dictionary<string, string> Dynamic { get; set; }
+        public Dictionary<string, DynamicObj> Dynamic { get; set; }
         public Dictionary<string, bool> Live { get; set; }
     }
     public class SubscribeObj

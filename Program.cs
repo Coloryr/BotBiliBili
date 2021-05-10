@@ -629,6 +629,10 @@ namespace BotBiliBili
                                 if (list.Contains(pack.id))
                                 {
                                     list.Remove(pack.id);
+                                    if (list.Count == 0)
+                                    {
+                                        ConfigUtils.Subscribes.Uids.TryRemove(comm, out var a);
+                                    }
                                     SendGroupMessage("取消订阅成功", pack.id);
                                     ConfigUtils.SaveSubscribe();
                                     break;
@@ -669,6 +673,10 @@ namespace BotBiliBili
                                 if (list.Contains(pack.id))
                                 {
                                     list.Remove(pack.id);
+                                    if (list.Count == 0)
+                                    {
+                                        ConfigUtils.Subscribes.Lives.TryRemove(comm, out var a);
+                                    }
                                     SendGroupMessage("取消订阅成功", pack.id);
                                     ConfigUtils.SaveSubscribe();
                                     break;

@@ -34,6 +34,7 @@ namespace BotBiliBili
             if (obj2.Count == 0)
                 return;
             string first = obj2[0]["desc"]["dynamic_id"].ToString();
+            long time = (long)obj2[0]["desc"]["timestamp"];
             if (!ConfigUtils.UidLast.Dynamic.ContainsKey(item1))
             {
                 var data1 = HttpUtils.GetDynamic(first);
@@ -41,7 +42,12 @@ namespace BotBiliBili
                 {
                     return;
                 }
-                ConfigUtils.UidLast.Dynamic.Add(item1, first);
+                DynamicObj obj = new()
+                {
+                    ID = first,
+                    Time = time
+                };
+                ConfigUtils.UidLast.Dynamic.Add(item1, obj);
                 save = true;
                 string temp1 = DynamicPicGen.Gen(data1);
                 Program.Log($"已生成{temp1}");
@@ -55,7 +61,10 @@ namespace BotBiliBili
                 foreach (var item2 in obj2)
                 {
                     var obj3 = item2["desc"]["dynamic_id"].ToString();
-                    if (ConfigUtils.UidLast.Dynamic[item1] == obj3)
+                    var time1 = (long)item2["desc"]["timestamp"];
+                    if (ConfigUtils.UidLast.Dynamic[item1].ID == obj3)
+                        break;
+                    if (ConfigUtils.UidLast.Dynamic[item1].Time > time1)
                         break;
                     var data1 = HttpUtils.GetDynamic(obj3);
                     if (data1 == null)
@@ -69,7 +78,11 @@ namespace BotBiliBili
                         Program.SendGroupImage(temp1, item3);
                     }
                 }
-                ConfigUtils.UidLast.Dynamic[item1] = first;
+                ConfigUtils.UidLast.Dynamic[item1] = new()
+                {
+                    Time = time,
+                    ID = first
+                };
                 save = true;
             }
         }
