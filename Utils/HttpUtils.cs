@@ -45,6 +45,22 @@ namespace BotBiliBili.Utils
             cancellation = new();
         }
 
+        public static string GetUrl(string url)
+        {
+            try
+            {
+                var data = client.GetAsync(url).Result;
+                if (data.StatusCode == HttpStatusCode.Found)
+                    return data.Headers.Location.AbsoluteUri;
+                else
+                    return data.RequestMessage.RequestUri.AbsoluteUri;
+            }
+            catch (Exception e)
+            {
+                Program.Error(e);
+                return null;
+            }
+        }
         public static void Check()
         {
             Program.Log("密匙校验中");
