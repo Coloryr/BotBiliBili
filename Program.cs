@@ -182,15 +182,13 @@ namespace BotBiliBili
                         {
                             Log($"正在生成视频:{comm}的图片");
                             BotTask.VideoAV(message, pack.id);
+                            break;
                         }
                         else if (comm.StartsWith("bv"))
                         {
                             Log($"正在生成视频:{comm}的图片");
                             BotTask.VideoBV(message, pack.id);
-                        }
-                        else
-                        {
-                            SendGroupMessage("错误的视频号", pack.id);
+                            break;
                         }
                     }
                     if (pack.message[1].StartsWith("[mirai:app:"))
