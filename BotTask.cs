@@ -122,7 +122,7 @@ namespace BotBiliBili
             {
                 try
                 {
-                    var data1 = HttpUtils.GetDynamic(uid);
+                    var data1 = HttpUtils.GetDynamicUid(uid);
                     if (data1 == null)
                     {
                         Program.SendGroupMessage($"获取不到动态：{uid}", group);
