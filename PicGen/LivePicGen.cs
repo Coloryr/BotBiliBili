@@ -134,8 +134,43 @@ namespace BotBiliBili.PicGen
             temp = data["room_info"]["description"].ToString();
             temp = temp.Replace("<p>", "").Replace("</p>", "");
 
-            int AllLength = (temp.Length / Config.InfoLim + 2 +
-                Tools.SubstringCount(temp, "\n")) * Config.InfoDeviation + (int)Config.InfoPos.Y;
+            float NowY = Config.InfoPos.Y;
+            DrawStringes(temp, ref bitmap, ref graphics,ref NowY);
+
+            if (NowY < bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, (int)NowY + Config.InfoDeviation);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
+            }
+
+            temp = $"Live/{id}.jpg";
+
+            graphics.Save();
+            bitmap.Save(temp);
+            graphics.Dispose();
+            bitmap.Dispose();
+            return Program.RunLocal + temp;
+        }
+
+        private static void DrawStringes(string draw, ref Bitmap bitmap, ref Graphics graphics, ref float NowY)
+        {
+            int count = 0;
+            string[] list = draw.Split("\n");
+            foreach (var item in list)
+            {
+                int a = item.Length / Config.InfoLim;
+                count += a == 0 ? 1 : a;
+            }
+            int AllLength = (count + 2 + list.Length) * Config.InfoDeviation + (int)NowY;
+
             if (AllLength > bitmap.Height)
             {
                 Bitmap bitmap1 = new(Config.Width, AllLength);
@@ -149,8 +184,7 @@ namespace BotBiliBili.PicGen
                 bitmap.Dispose();
                 bitmap = bitmap1;
             }
-
-            string[] list = temp.Split("\n");
+            string temp1;
             int d = 0;
             foreach (var item in list)
             {
@@ -159,7 +193,6 @@ namespace BotBiliBili.PicGen
                 while (true)
                 {
                     bool last = false;
-                    float NowY = Config.InfoPos.Y + d * Config.InfoDeviation;
                     d++;
                     int b = 0;
                     while (true)
@@ -181,19 +214,14 @@ namespace BotBiliBili.PicGen
                         b++;
                     }
                     graphics.DrawString(temp1, info_font, info_color, Config.InfoPos.X, NowY);
+                    NowY += Config.InfoDeviation;
                     a++;
                     if (last)
+                    {
                         break;
+                    }
                 }
             }
-
-            temp = $"Live/{id}.jpg";
-
-            graphics.Save();
-            bitmap.Save(temp);
-            graphics.Dispose();
-            bitmap.Dispose();
-            return Program.RunLocal + temp;
         }
     }
 }
