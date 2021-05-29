@@ -11,14 +11,14 @@ namespace BotBiliBili.Utils
         {
             if (url.EndsWith(".webp"))
             {
-                var data = HttpUtils.GetByte(url);
-                var data1 = new SimpleAnimDecoder().DecodeFromBytes(data);
-                if (data1.FramesCount == 1)
-                    return data1.Frames[0].Image as Bitmap;
-                else
-                    return data1.Frames[new Random().Next(data1.FramesCount - 1)].Image as Bitmap;
+                //var data = HttpUtils.GetByte(url);
+                //var data1 = new SimpleAnimDecoder().DecodeFromBytes(data);
+                //if (data1.FramesCount == 1)
+                //    return data1.Frames[0].Image as Bitmap;
+                //else
+                //    return data1.Frames[new Random().Next(data1.FramesCount - 1)].Image as Bitmap;
+                url += "@.jpg";
             }
-            else
                 return Image.FromStream(HttpUtils.GetData(url)) as Bitmap;
         }
         public static Bitmap ZoomImage(Bitmap bitmap, int destHeight, int destWidth)

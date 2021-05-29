@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,6 +30,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="publish\**" />
+    <Compile Remove="WebP\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <EmbeddedResource Remove="WebP\**" />
+    <None Remove="publish\**" />
+    <None Remove="WebP\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="E:\NuGet\packages\webpdotnet\1.2.0.20210418\build\..\runtimes\win-AnyCPU\native\WebPDotNetNative.dll" />
   </ItemGroup>
 
@@ -37,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="QRCoder" Version="1.4.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
