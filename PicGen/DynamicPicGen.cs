@@ -177,7 +177,7 @@ namespace BotBiliBili.PicGen
             string temp1;
             DrawStringes(dynamic, ref bitmap, ref graphics, ref NowY);
 
-            NowY += Config.TextDeviation + 10;
+            NowY += 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -203,7 +203,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation + 10;
+            NowY += 10;
 
             float xPos = Config.PicStart.X;
 
@@ -249,7 +249,7 @@ namespace BotBiliBili.PicGen
 
             bitmap.Save("test.jpg");
 
-            NowY += Config.TextDeviation + 10;
+            NowY += 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -276,7 +276,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString(temp1, text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation + 10;
+            NowY += 10;
 
             float xPos = Config.PicStart.X;
 
@@ -312,7 +312,7 @@ namespace BotBiliBili.PicGen
 
             DrawStringes(content, ref bitmap, ref graphics, ref NowY);
 
-            NowY += Config.TextDeviation + 10;
+            NowY += 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -452,7 +452,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString($"电影：{data["apiSeasonInfo"]["title"]}", text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -484,7 +484,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString($"发布公告：", text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -526,7 +526,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString($"发布动态：", text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -567,7 +567,7 @@ namespace BotBiliBili.PicGen
 
             graphics.DrawString($"关联视频：", text_font, text_color, Config.TextX, NowY);
 
-            NowY += Config.TextDeviation;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
