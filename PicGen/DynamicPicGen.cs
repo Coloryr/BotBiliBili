@@ -177,7 +177,7 @@ namespace BotBiliBili.PicGen
             string temp1;
             DrawStringes(dynamic, ref bitmap, ref graphics, ref NowY);
 
-            NowY += 10;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
@@ -247,9 +247,7 @@ namespace BotBiliBili.PicGen
 
             DrawStringes(dynamic, ref bitmap, ref graphics, ref NowY);
 
-            bitmap.Save("test.jpg");
-
-            NowY += 10;
+            NowY += Config.TextDeviation + 10;
             graphics.DrawRectangle(new Pen(Brushes.Black, 2), Config.PicStart.X, NowY, Config.Width - Config.PicStart.X * 2, 2);
             NowY += 18;
 
