@@ -472,6 +472,8 @@ namespace BotBiliBili.PicGen
             graphics.DrawImage(pic1, xPos,
                NowY, pic1.Width, pic1.Height);
 
+            NowY += pic1.Height;
+
             pic1.Dispose();
         }
 
