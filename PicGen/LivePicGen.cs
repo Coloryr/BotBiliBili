@@ -1,5 +1,6 @@
 ﻿using BotBiliBili.Config;
 using BotBiliBili.Utils;
+using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Drawing;
@@ -132,10 +133,11 @@ namespace BotBiliBili.PicGen
                 Config.PicHeight, Config.PicWidth), Config.PicPos.X, Config.PicPos.Y);
 
             temp = data["room_info"]["description"].ToString();
-            temp = temp.Replace("<p>", "").Replace("</p>", "");
+            var doc = new HtmlDocument();
+            doc.LoadHtml(temp);
 
             float NowY = Config.InfoPos.Y;
-            DrawStringes(temp, ref bitmap, ref graphics,ref NowY);
+            DrawStringes(doc.DocumentNode.InnerText, ref bitmap, ref graphics,ref NowY);
 
             if (NowY < bitmap.Height)
             {
