@@ -344,6 +344,10 @@ namespace BotBiliBili.PicGen
                 {
                     Type8_1(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, ref NowY);
                 }
+                if (item_type == "4")
+                {
+                    Type4(JObject.Parse(data["origin"].ToString()), ref bitmap, ref graphics, ref NowY);
+                }
             }
             else
             {
