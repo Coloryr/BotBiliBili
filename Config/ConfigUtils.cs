@@ -76,10 +76,10 @@ namespace BotBiliBili.Config
                     UnSubscribeUid = "duid",
                     UnSubscribeLive = "dlive"
                 },
-                CheckDelay = 1000,
+                CheckDelay = 2000,
                 TimeOut = 10,
                 AdminSubscribeOnly = true,
-                WaitTime = 60,
+                WaitTime = 120,
                 DirectVideo = true,
                 RequestHeaders = new()
                 {
