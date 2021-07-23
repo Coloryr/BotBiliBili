@@ -2,6 +2,7 @@
 using BotBiliBili.Utils;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -367,11 +368,69 @@ namespace BotBiliBili.PicGen
 
             if (data1["item"]["pictures"] is JArray array)
             {
+                List<Bitmap> piclist = new();
                 for (int a = 0; a < array.Count; a++)
                 {
                     string pic_url1 = array[a]["img_src"].ToString();
                     Bitmap pic1 = Tools.GetImgUrl(pic_url1);
-                    pic1 = Tools.ZoomImage(pic1, pic1.Height, Config.PicWidth);
+                    piclist.Add(pic1);
+                }
+
+                while (true)
+                {
+                    if (piclist.Count >= 3)
+                    {
+                        var item1 = piclist[0];
+                        var item2 = piclist[1];
+                        var item3 = piclist[2];
+                        if (item1.Width == item1.Height && item2.Width == item2.Height && item3.Width == item3.Height)
+                        {
+                            if (item1.Width == item2.Width && item2.Width == item3.Width)
+                            {
+                                Bitmap pic1 = Tools.ZoomImage(item1, item1.Height, Config.PicWidth / 3);
+                                Bitmap pic2 = Tools.ZoomImage(item2, item2.Height, Config.PicWidth / 3);
+                                Bitmap pic3 = Tools.ZoomImage(item3, item3.Height, Config.PicWidth / 3);
+                                if (NowY + pic1.Height > bitmap.Height)
+                                {
+                                    graphics.Save();
+                                    Bitmap bitmap1 = new(Config.Width, (int)(NowY + pic1.Height));
+                                    graphics = Graphics.FromImage(bitmap1);
+                                    graphics.InterpolationMode = InterpolationMode.High;
+                                    graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                                    graphics.Clear(back);
+                                    graphics.DrawImage(bitmap, 0, 0);
+                                    bitmap.Dispose();
+                                    bitmap = bitmap1;
+                                }
+                                int temp1 = Config.PicWidth / 3;
+                                graphics.DrawImage(pic1, xPos,
+                                    NowY, pic1.Width, pic1.Height);
+                                graphics.DrawImage(pic2, xPos + temp1,
+                                    NowY, pic2.Width, pic1.Height);
+                                graphics.DrawImage(pic3, xPos + temp1 + temp1,
+                                    NowY, pic3.Width, pic1.Height);
+                                NowY += pic1.Height;
+                                piclist.Remove(item1);
+                                piclist.Remove(item2);
+                                piclist.Remove(item3);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                NowY += Config.PicPid;
+
+                foreach (var item in piclist)
+                {
+                    Bitmap pic1 = Tools.ZoomImage(item, item.Height, Config.PicWidth);
                     if (NowY + pic1.Height > bitmap.Height)
                     {
                         graphics.Save();
