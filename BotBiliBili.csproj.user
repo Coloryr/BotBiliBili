@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_LastSelectedProfileId>E:\C#%27s src\BotBiliBili\Properties\PublishProfiles\FolderProfile5.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>E:\Cshape src\BotBiliBili\Properties\PublishProfiles\FolderProfile4.pubxml</_LastSelectedProfileId>
     <ActiveDebugProfile>BotBiliBili</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

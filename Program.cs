@@ -11,7 +11,7 @@ namespace BotBiliBili
 {
     class Program
     {
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
         public static string RunLocal;
         private static Logs logs;
         private static Robot robot;
@@ -118,6 +118,35 @@ namespace BotBiliBili
                         var data = HttpUtils.GetLive(arg[2]);
                         LivePicGen.Gen(data);
                         Log("已生成");
+                    }
+                    else if (arg[1] == "nuser")
+                    {
+                        if (arg.Length != 3)
+                        {
+                            Error("错误的参数");
+                            continue;
+                        }
+                        var data1 = HttpUtils.SearchUser(arg[2]);
+                        if (data1 == null)
+                        {
+                            Error($"搜索不到用户：{arg[2]}");
+                            return;
+                        }
+                        var data2 = data1["data"]["result"] as JArray;
+                        if (data2.Count == 0)
+                        {
+                            Error($"搜索：{arg[2]} 没有结果");
+                            return;
+                        }
+                        string id = data2[0]["mid"].ToString();
+                        data1 = HttpUtils.GetDynamicUid(id);
+                        if (data1 == null)
+                        {
+                            Error($"获取不到动态：{id}");
+                            return;
+                        }
+                        string temp1 = DynamicPicGen.Gen(data1);
+                        Program.Log($"已生成{temp1}");
                     }
                 }
                 else if (arg[0] == "reload")

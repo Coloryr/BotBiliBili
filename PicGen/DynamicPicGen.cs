@@ -424,6 +424,10 @@ namespace BotBiliBili.PicGen
                             break;
                         }
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
 
                 NowY += Config.PicPid;
