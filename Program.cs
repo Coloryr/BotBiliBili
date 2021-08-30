@@ -11,7 +11,7 @@ namespace BotBiliBili
 {
     class Program
     {
-        public const string Version = "1.0.2";
+        public const string Version = "1.0.3";
         public static string RunLocal;
         private static Logs logs;
         private static Robot robot;

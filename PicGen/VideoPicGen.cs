@@ -139,6 +139,7 @@ namespace BotBiliBili.PicGen
 
             string[] list = temp.Split("\n");
             int d = 0;
+            double nowy1 = Config.InfoPos.Y;
             foreach (var item in list)
             {
                 int a = 0;
@@ -167,11 +168,26 @@ namespace BotBiliBili.PicGen
                         }
                         b++;
                     }
+                    nowy1 = NowY;
                     graphics.DrawString(temp1, info_font, info_color, Config.InfoPos.X, NowY);
                     a++;
                     if (last)
                         break;
                 }
+            }
+            nowy1 += Config.InfoDeviation;
+            if (nowy1 < bitmap.Height)
+            {
+                Bitmap bitmap1 = new(Config.Width, (int)nowy1 + Config.InfoDeviation);
+                graphics.Save();
+                graphics.Dispose();
+                graphics = Graphics.FromImage(bitmap1);
+                graphics.InterpolationMode = InterpolationMode.High;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(back);
+                graphics.DrawImage(bitmap, 0, 0);
+                bitmap.Dispose();
+                bitmap = bitmap1;
             }
 
             graphics.Save();
