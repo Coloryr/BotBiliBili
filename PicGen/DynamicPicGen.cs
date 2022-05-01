@@ -527,7 +527,7 @@ namespace BotBiliBili.PicGen
             if (NowY + pic1.Height > bitmap.Height)
             {
                 graphics.Save();
-                Bitmap bitmap1 = new(Config.Width, (int)(NowY + pic1.Height));
+                Bitmap bitmap1 = new(Config.Width, (int)(NowY + pic1.Height + Config.HeadPic.Y));
                 graphics = Graphics.FromImage(bitmap1);
                 graphics.InterpolationMode = InterpolationMode.High;
                 graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
