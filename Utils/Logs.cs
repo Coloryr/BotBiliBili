@@ -3,64 +3,63 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BotBiliBili.Utils
+namespace BotBiliBili.Utils;
+
+public class Logs
 {
-    public class Logs
+    public string log { get; set; }
+    private string RunLocal;
+    private readonly object lockobject = new object();
+
+    public Logs(string RunLocal)
     {
-        public string log { get; set; }
-        private string RunLocal;
-        private readonly object lockobject = new object();
+        this.RunLocal = RunLocal;
+        if (string.IsNullOrWhiteSpace(log))
+            log = "logs.log";
+        if (!File.Exists(RunLocal + log))
+            File.Create(RunLocal + log);
+    }
 
-        public Logs(string RunLocal)
+    private void LogWrite(string a)
+    {
+        lock (lockobject)
         {
-            this.RunLocal = RunLocal;
-            if (string.IsNullOrWhiteSpace(log))
-                log = "logs.log";
-            if (!File.Exists(RunLocal + log))
-                File.Create(RunLocal + log);
-        }
-
-        private void LogWrite(string a)
-        {
-            lock (lockobject)
+            try
             {
-                try
-                {
-                    var date = DateTime.Now;
-                    string year = date.ToShortDateString().ToString();
-                    string time = date.ToLongTimeString().ToString();
-                    string write = "[" + year + "]" + "[" + time + "]" + a;
-                    File.AppendAllText(RunLocal + log, write + Environment.NewLine, Encoding.UTF8);
-                    Console.WriteLine(write);
-                }
-                catch
-                { }
+                var date = DateTime.Now;
+                string year = date.ToShortDateString().ToString();
+                string time = date.ToLongTimeString().ToString();
+                string write = "[" + year + "]" + "[" + time + "]" + a;
+                File.AppendAllText(RunLocal + log, write + Environment.NewLine, Encoding.UTF8);
+                Console.WriteLine(write);
             }
+            catch
+            { }
         }
-        public void LogError(Exception e)
+    }
+    public void LogError(Exception e)
+    {
+        Task.Factory.StartNew(() =>
         {
-            Task.Factory.StartNew(() =>
-            {
-                string a = "[Error]" + e.Message + ":" + e.Source + "\n" + e.StackTrace;
-                LogWrite(a);
-            });
-        }
-        public void LogError(string a)
+            string a = "[Error]" + e.Message + ":" + e.Source + "\n" + e.StackTrace;
+            LogWrite(a);
+        });
+    }
+    public void LogError(string a)
+    {
+        Task.Factory.StartNew(() =>
         {
-            Task.Factory.StartNew(() =>
-            {
-                a = "[Error]" + a;
-                LogWrite(a);
-            });
-        }
+            a = "[Error]" + a;
+            LogWrite(a);
+        });
+    }
 
-        public void LogOut(string a)
+    public void LogOut(string a)
+    {
+        Task.Factory.StartNew(() =>
         {
-            Task.Factory.StartNew(() =>
-            {
-                a = "[Info]" + a;
-                LogWrite(a);
-            });
-        }
+            a = "[Info]" + a;
+            LogWrite(a);
+        });
     }
 }

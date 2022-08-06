@@ -7,292 +7,293 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 
-namespace BotBiliBili.Utils
+namespace BotBiliBili.Utils;
+
+public static class HttpUtils
 {
-    class HttpUtils
+    private static HttpClient client;
+    private static CookieContainer Cookie;
+    private static HttpClientHandler HttpClientHandler;
+    private static CancellationTokenSource cancellation;
+    public static void Cancel()
     {
-        private static HttpClient client;
-        private static CookieContainer Cookie;
-        private static HttpClientHandler HttpClientHandler;
-        private static CancellationTokenSource cancellation;
-        public static void Cancel()
+        cancellation?.Cancel(false);
+    }
+    public static void Init()
+    {
+        if (client != null)
         {
-            cancellation?.Cancel(false);
+            client.Dispose();
         }
-        public static void Init()
+        Cookie = new();
+        Cookie.Add(new Cookie("SESSDATA",
+            ConfigUtils.Config.SESSDATA ?? "", "/", ".bilibili.com"));
+        Cookie.Add(new Cookie("bili_jct",
+            ConfigUtils.Config.bili_jct ?? "", "/", ".bilibili.com"));
+        HttpClientHandler = new()
         {
-            if (client != null)
-            {
-                client.Dispose();
-            }
-            Cookie = new();
-            Cookie.Add(new Cookie("SESSDATA",
-                ConfigUtils.Config.SESSDATA ?? "", "/", ".bilibili.com"));
-            Cookie.Add(new Cookie("bili_jct",
-                ConfigUtils.Config.bili_jct ?? "", "/", ".bilibili.com"));
-            HttpClientHandler = new()
-            {
-                CookieContainer = Cookie,
-            };
-            client = new HttpClient(HttpClientHandler)
-            {
-                Timeout = TimeSpan.FromSeconds(ConfigUtils.Config.TimeOut)
-            };
-            foreach (var item in ConfigUtils.Config.RequestHeaders)
-            {
-                client.DefaultRequestHeaders.Add(item.Key, item.Value);
-            }
-            cancellation = new();
+            CookieContainer = Cookie,
+        };
+        client = new HttpClient(HttpClientHandler)
+        {
+            Timeout = TimeSpan.FromSeconds(ConfigUtils.Config.TimeOut)
+        };
+        foreach (var item in ConfigUtils.Config.RequestHeaders)
+        {
+            client.DefaultRequestHeaders.Add(item.Key, item.Value);
         }
+        cancellation = new();
+    }
 
-        public static string GetUrl(string url)
+    public static string GetUrl(string url)
+    {
+        try
         {
-            try
-            {
-                var data = client.GetAsync(url).Result;
-                if (data.StatusCode == HttpStatusCode.Found)
-                    return data.Headers.Location.AbsoluteUri;
-                else
-                    return data.RequestMessage.RequestUri.AbsoluteUri;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
-                return null;
-            }
-        }
-        public static void Check()
-        {
-            Program.Log("密匙校验中");
-            string url = "https://api.bilibili.com/x/web-interface/archive/like";
-            Dictionary<string, string> arg = new();
-            arg.Add("bvid", "BV1EW411j7cg");
-            arg.Add("like", "1");
-            arg.Add("csrf", ConfigUtils.Config.bili_jct);
-            var data = Post(url, arg);
-            JObject obj = JObject.Parse(data);
-            string res = obj["code"].ToString();
-            if (res == "-111")
-            {
-                Program.Error("bili_jct 校验失败");
-            }
-            else if (res == "-101" || res == "-400")
-            {
-                Program.Error("SESSDATA 校验失败");
-            }
+            var data = client.GetAsync(url).Result;
+            if (data.StatusCode == HttpStatusCode.Found)
+                return data.Headers.Location.AbsoluteUri;
             else
-            {
-                Program.Log("账户校验成功");
-            }
+                return data.RequestMessage.RequestUri.AbsoluteUri;
         }
+        catch (Exception e)
+        {
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static void Check()
+    {
+        Program.Log("密匙校验中");
+        string url = "https://api.bilibili.com/x/web-interface/archive/like";
+        Dictionary<string, string> arg = new()
+        {
+            { "bvid", "BV1EW411j7cg" },
+            { "like", "1" },
+            { "csrf", ConfigUtils.Config.bili_jct }
+        };
+        var data = Post(url, arg);
+        JObject obj = JObject.Parse(data);
+        string res = obj["code"].ToString();
+        if (res == "-111")
+        {
+            Program.Error("bili_jct 校验失败");
+        }
+        else if (res == "-101" || res == "-400")
+        {
+            Program.Error("SESSDATA 校验失败");
+        }
+        else
+        {
+            Program.Log("账户校验成功");
+        }
+    }
 
-        public static JObject GetVideoA(string aid)
+    public static JObject GetVideoA(string aid)
+    {
+        try
         {
-            try
+            string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid.ToLower().Replace("av", "")}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.bilibili.com/x/web-interface/view?aid={aid.ToLower().Replace("av", "")}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取视频信息失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取视频信息失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
+        catch (Exception e)
+        {
+            Program.Error(e);
+            return null;
+        }
+    }
 
-        public static JObject GetVideoB(string bid)
+    public static JObject GetVideoB(string bid)
+    {
+        try
         {
-            try
+            string url = $"https://api.bilibili.com/x/web-interface/view?bvid={bid}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.bilibili.com/x/web-interface/view?bvid={bid}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取视频信息失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取视频信息失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
+        catch (Exception e)
+        {
+            Program.Error(e);
+            return null;
+        }
+    }
 
-        public static JObject GetDynamic(string did)
+    public static JObject GetDynamic(string did)
+    {
+        try
         {
-            try
+            string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={did}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={did}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取动态信息失败:{obj["message"]}");
-                    return null;
-                }
-                else if (obj["data"]["card"] == null && obj["data"]["cards"] == null)
-                {
-                    Program.Error($"获取动态信息失败:动态已删除");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取动态信息失败:{obj["message"]}");
                 return null;
             }
-        }
-        public static JObject GetLive(string room)
-        {
-            try
+            else if (obj["data"]["card"] == null && obj["data"]["cards"] == null)
             {
-                string url = $"https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={room}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取直播间信息失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取动态信息失败:动态已删除");
                 return null;
             }
+            return obj;
         }
-        public static JObject GetLiveUID(string uid)
+        catch (Exception e)
         {
-            try
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static JObject GetLive(string room)
+    {
+        try
+        {
+            string url = $"https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={room}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid={uid}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取用户直播间信息失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取直播间信息失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
+        catch (Exception e)
+        {
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static JObject GetLiveUID(string uid)
+    {
+        try
+        {
+            string url = $"https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid={uid}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
+            {
+                Program.Error($"获取用户直播间信息失败:{obj["message"]}");
+                return null;
+            }
+            return obj;
+        }
+        catch (Exception e)
+        {
+            Program.Error(e);
+            return null;
+        }
+    }
 
-        public static JObject GetDynamicUid(string uid)
+    public static JObject GetDynamicUid(string uid)
+    {
+        try
         {
-            try
+            string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid={uid}";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid={uid}";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"获取动态信息失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"获取动态信息失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
-        public static JObject SearchUser(string name)
+        catch (Exception e)
         {
-            try
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static JObject SearchUser(string name)
+    {
+        try
+        {
+            string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=bili_user";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=bili_user";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"搜索用户失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"搜索用户失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
-        public static JObject SearchVideo(string name)
+        catch (Exception e)
         {
-            try
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static JObject SearchVideo(string name)
+    {
+        try
+        {
+            string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=video";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=video";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"搜索视频失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"搜索视频失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
-        public static JObject SearchLive(string name)
+        catch (Exception e)
         {
-            try
+            Program.Error(e);
+            return null;
+        }
+    }
+    public static JObject SearchLive(string name)
+    {
+        try
+        {
+            string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=live";
+            var data = Get(url);
+            JObject obj = JObject.Parse(data);
+            if (obj["code"].ToString() != "0")
             {
-                string url = $"https://api.bilibili.com/x/web-interface/search/type?keyword={name}&search_type=live";
-                var data = Get(url);
-                JObject obj = JObject.Parse(data);
-                if (obj["code"].ToString() != "0")
-                {
-                    Program.Error($"搜索视频失败:{obj["message"]}");
-                    return null;
-                }
-                return obj;
-            }
-            catch (Exception e)
-            {
-                Program.Error(e);
+                Program.Error($"搜索视频失败:{obj["message"]}");
                 return null;
             }
+            return obj;
         }
-
-        public static string Post(string url, Dictionary<string, string> arg)
+        catch (Exception e)
         {
-            return client.PostAsync(url, new FormUrlEncodedContent(arg), cancellation.Token).Result.Content.ReadAsStringAsync().Result;
+            Program.Error(e);
+            return null;
         }
+    }
 
-        public static string Get(string url)
-        {
-            return client.GetStringAsync(url, cancellation.Token).Result;
-        }
+    public static string Post(string url, Dictionary<string, string> arg)
+    {
+        return client.PostAsync(url, new FormUrlEncodedContent(arg), cancellation.Token).Result.Content.ReadAsStringAsync().Result;
+    }
 
-        public static Stream GetData(string url)
-        {
-            return client.GetStreamAsync(url, cancellation.Token).Result;
-        }
+    public static string Get(string url)
+    {
+        return client.GetStringAsync(url, cancellation.Token).Result;
+    }
 
-        public static byte[] GetByte(string url)
-        {
-            return client.GetByteArrayAsync(url, cancellation.Token).Result;
-        }
+    public static Stream GetData(string url)
+    {
+        return client.GetStreamAsync(url, cancellation.Token).Result;
+    }
+
+    public static byte[] GetByte(string url)
+    {
+        return client.GetByteArrayAsync(url, cancellation.Token).Result;
     }
 }
