@@ -64,6 +64,7 @@ public record PicSave
 {
     public string BackGround { get; set; }
     public string Font { get; set; }
+    public string Font1 { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
     public string QBack { get; set; }

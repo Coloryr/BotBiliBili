@@ -99,6 +99,7 @@ public static class ConfigUtils
             },
             QSize = 120,
             Font = "Microsoft YaHei",
+            Font1 = "Segoe UI Emoji",
             Width = 600,
             Height = 800,
             HeadPic = new()
@@ -167,6 +168,7 @@ public static class ConfigUtils
             },
             QSize = 120,
             Font = "Microsoft YaHei",
+            Font1 = "Segoe UI Emoji",
             Width = 600,
             Height = 800,
             HeadPic = new()
@@ -224,6 +226,7 @@ public static class ConfigUtils
             },
             QSize = 120,
             Font = "Microsoft YaHei",
+            Font1 = "Segoe UI Emoji",
             Width = 600,
             Height = 800,
             HeadPic = new()

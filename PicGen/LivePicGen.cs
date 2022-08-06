@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Linq;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using System.Collections.Generic;
 
 namespace BotBiliBili.PicGen;
 
@@ -33,6 +34,14 @@ public static class LivePicGen
     private static Color Qback;
     private static Color Qpoint;
     private static LiveSave Config;
+
+    private static TextOptions FontNameOpt;
+    private static TextOptions FontUIDOpt;
+    private static TextOptions FontTitleOpt;
+    private static TextOptions FontStateOpt;
+    private static TextOptions FontLiveOpt;
+    private static TextOptions FontInfoOpt;
+
     public static void Init()
     {
         if (!Directory.Exists(Program.RunLocal + "Live"))
@@ -48,12 +57,40 @@ public static class LivePicGen
 
         var temp = SystemFonts.Families.Where(a => a.Name == Config.Font).FirstOrDefault();
 
+        var FontEmoji = SystemFonts.Families.Where(a => a.Name == Config.Font1).FirstOrDefault();
+
         FontName = temp.CreateFont(Config.NameSize, FontStyle.Regular);
         FontUID = temp.CreateFont(Config.UidSize, FontStyle.Regular);
         FontTitle = temp.CreateFont(Config.TitleSize, FontStyle.Regular);
         FontState = temp.CreateFont(Config.StateSize, FontStyle.Regular);
         FontLive = temp.CreateFont(Config.LiveSize, FontStyle.Regular);
         FontInfo = temp.CreateFont(Config.InfoSize, FontStyle.Regular);
+
+        FontNameOpt = new(FontName)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontUIDOpt = new(FontUID)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontTitleOpt = new(FontTitle)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontStateOpt = new(FontState)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontLiveOpt = new(FontLive)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontInfoOpt = new(FontInfo)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+
         Qback = Color.Parse(Config.QBack);
         Qpoint = Color.Parse(Config.QPoint);
     }
@@ -85,11 +122,18 @@ public static class LivePicGen
         bitmap.Mutate(m =>
         {
             m.DrawImage(pic1, new Point((int)Config.HeadPic.X, (int)Config.HeadPic.Y), 1.0f);
-            m.DrawText(data["anchor_info"]["base_info"]["uname"].ToString(), 
-                FontName, ColorName, new PointF(Config.NamePos.X, Config.NamePos.Y));
-            m.DrawText("直播间:" + id, FontLive, ColorLive, new PointF(Config.LivePos.X, Config.LivePos.Y));
-            m.DrawText("UID:" + data["room_info"]["uid"].ToString(), FontUID, ColorUID, 
-                new PointF(Config.UidPos.X, Config.UidPos.Y));
+            m.DrawText(new TextOptions(FontNameOpt)
+            {
+                Origin = new PointF(Config.NamePos.X, Config.NamePos.Y)
+            }, data["anchor_info"]["base_info"]["uname"].ToString(), ColorName);
+            m.DrawText(new TextOptions(FontLiveOpt)
+            {
+                Origin = new PointF(Config.LivePos.X, Config.LivePos.Y)
+            }, $"直播间:{id}", ColorLive);
+            m.DrawText(new TextOptions(FontUIDOpt)
+            {
+                Origin = new PointF(Config.UidPos.X, Config.UidPos.Y)
+            }, $"UID:{data["room_info"]["uid"]}", ColorUID);
             m.DrawImage(code1, new Point((int)Config.QPos.X, (int)Config.QPos.Y), 1.0f);
         });
 
@@ -98,8 +142,10 @@ public static class LivePicGen
         string temp = dt.ToString("HH:mm:ss");
         bitmap.Mutate(m =>
         {
-            m.DrawText($"开播时间:{temp}  观看:{data["room_info"]["online"]}  分区:{data["room_info"]["area_name"]}", 
-                FontState, ColorState, new PointF(Config.StatePos.X, Config.StatePos.Y));
+            m.DrawText(new TextOptions(FontStateOpt)
+            {
+                Origin = new PointF(Config.StatePos.X, Config.StatePos.Y)
+            }, $"开播时间:{temp} 观看:{data["room_info"]["online"]} 分区:{data["room_info"]["area_name"]}", ColorState);
         });
 
         temp = data["room_info"]["title"].ToString();
@@ -115,8 +161,7 @@ public static class LivePicGen
                 break;
             }
             string temp2 = temp.Substring(now, Config.TitleLim + c);
-            var FontNormalOpt = new TextOptions(FontTitle);
-            FontRectangle size = TextMeasurer.Measure(temp2, FontNormalOpt);
+            FontRectangle size = TextMeasurer.Measure(temp2, FontTitleOpt);
             if (size.Width > Config.Width - Config.TextLeft)
             {
                 temp1 = string.Concat(temp.AsSpan(now, Config.TitleLim + c - 2), "...");
@@ -196,8 +241,7 @@ public static class LivePicGen
                         break;
                     }
                     string temp2 = item.Substring(now, Config.InfoLim + b);
-                    var FontNormalOpt = new TextOptions(FontInfo);
-                    FontRectangle size = TextMeasurer.Measure(temp2, FontNormalOpt);
+                    FontRectangle size = TextMeasurer.Measure(temp2, FontInfoOpt);
                     if (size.Width > Config.Width - Config.TextLeft)
                     {
                         temp1 = item.Substring(now, Config.InfoLim + b - 1);
@@ -210,7 +254,10 @@ public static class LivePicGen
                 float NowY1 = NowY;
                 bitmap.Mutate(m =>
                 {
-                    m.DrawText(temp1, FontInfo, ColorInfo, new PointF(Config.InfoPos.X, NowY1));
+                    m.DrawText(new TextOptions(FontInfoOpt)
+                    {
+                        Origin = new PointF(Config.InfoPos.X, NowY1)
+                    }, temp1, ColorInfo);
                 });
                 NowY += Config.InfoDeviation;
                 a++;

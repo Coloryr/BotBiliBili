@@ -29,6 +29,11 @@ public static class DynamicPicGen
     private static Color Qback;
     private static Color Qpoint;
     private static DynamicSave Config;
+
+    private static TextOptions FontNameOpt;
+    private static TextOptions FontUIDOpt;
+    private static TextOptions FontStateOpt;
+    private static TextOptions FontTextOpt;
     public static void Init()
     {
         if (!Directory.Exists(Program.RunLocal + "Dynamic"))
@@ -42,10 +47,30 @@ public static class DynamicPicGen
 
         var temp = SystemFonts.Families.Where(a => a.Name == Config.Font).FirstOrDefault();
 
+        var FontEmoji = SystemFonts.Families.Where(a => a.Name == Config.Font1).FirstOrDefault();
+
         FontName = temp.CreateFont(Config.NameSize, FontStyle.Regular);
         FontUID = temp.CreateFont(Config.UidSize, FontStyle.Regular);
         FontState = temp.CreateFont(Config.StateSize, FontStyle.Regular);
         FontText = temp.CreateFont(Config.TextSize, FontStyle.Regular);
+
+        FontNameOpt = new(FontName)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontUIDOpt = new(FontUID)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontStateOpt = new(FontState)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontTextOpt = new(FontText)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+
         Qback = Color.Parse(Config.QBack);
         Qpoint = Color.Parse(Config.QPoint);
     }
@@ -80,12 +105,19 @@ public static class DynamicPicGen
         {
             m.Clear(ColorBack);
             m.DrawImage(pic1, new Point((int)Config.HeadPic.X, (int)Config.HeadPic.Y), 1.0f);
-            m.DrawText(desc["user_profile"]["info"]["uname"].ToString(),
-                FontName, ColorName, new PointF(Config.NamePos.X, Config.NamePos.Y));
-            m.DrawText("UID:" + desc["user_profile"]["info"]["uid"].ToString(),
-                FontUID, ColorUID, new PointF(Config.UidPos.X, Config.UidPos.Y));
+            m.DrawText(new TextOptions(FontNameOpt)
+            {
+                Origin = new PointF(Config.NamePos.X, Config.NamePos.Y)
+            }, desc["user_profile"]["info"]["uname"].ToString(), ColorName);
+            m.DrawText(new TextOptions(FontUIDOpt)
+            {
+                Origin = new PointF(Config.UidPos.X, Config.UidPos.Y)
+            }, $"UID:{desc["user_profile"]["info"]["uid"]}", ColorUID);
             m.DrawImage(code1, new Point((int)Config.QPos.X, (int)Config.QPos.Y), 1.0f);
-            m.DrawText($"{temp}  观看:{data["desc"]["view"]}  点赞:{data["desc"]["like"]}", FontState, ColorState, new PointF(Config.StatePos.X, Config.StatePos.Y));
+            m.DrawText(new TextOptions(FontStateOpt)
+            {
+                Origin = new PointF(Config.StatePos.X, Config.StatePos.Y)
+            }, $"{temp} 观看:{data["desc"]["view"]} 点赞:{data["desc"]["like"]}", ColorState);
         });
 
         int type = (int)desc["type"];
@@ -158,7 +190,7 @@ public static class DynamicPicGen
         else
         {
             if (dynamic != desc)
-                dynamic = "发布视频：\n" + dynamic;
+                dynamic = $"发布视频：{Environment.NewLine}{dynamic}";
             else
                 dynamic = "发布视频：";
         }
@@ -199,7 +231,10 @@ public static class DynamicPicGen
         NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText(temp1, FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, temp1, ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -215,7 +250,7 @@ public static class DynamicPicGen
         }
 
         NowY1 = NowY;
-        bitmap.Mutate(m => 
+        bitmap.Mutate(m =>
         {
             m.DrawImage(pic1, new Point((int)xPos, (int)NowY1), 1.0f);
         });
@@ -235,7 +270,7 @@ public static class DynamicPicGen
         else
         {
             if (dynamic != desc)
-                dynamic = "发布视频：\n" + dynamic;
+                dynamic = $"发布视频：{Environment.NewLine}{dynamic}";
             else
                 dynamic = "发布视频：";
         }
@@ -276,7 +311,10 @@ public static class DynamicPicGen
         NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText(temp1, FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, temp1, ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -307,8 +345,7 @@ public static class DynamicPicGen
     private static void Type1(JObject data, ref Image<Rgba32> bitmap, ref float NowY)
     {
         JObject data1 = data["item"] as JObject;
-        string content = data1["content"].ToString();
-        content = "转发动态：\n" + content;
+        string content = $"转发动态：{Environment.NewLine}{data1["content"]}";
 
         DrawStringes(content, ref bitmap, ref NowY);
 
@@ -329,8 +366,10 @@ public static class DynamicPicGen
             NowY1 = NowY;
             bitmap.Mutate(m =>
             {
-                m.DrawText($"{info["uname"]} UID:{info["uid"]}",
-                    FontState, ColorName, new PointF(Config.StatePos.X, NowY1));
+                m.DrawText(new TextOptions(FontStateOpt)
+                {
+                    Origin = new PointF(Config.StatePos.X, NowY1)
+                }, $"{info["uname"]} UID:{info["uid"]}", ColorName);
             });
 
             NowY += Config.StateSize + 20;
@@ -375,7 +414,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText("发布动态：", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, "发布动态：", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -489,7 +531,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText("哔哩哔哩漫画社区精选：", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, "哔哩哔哩漫画社区精选：", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -536,7 +581,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText($"电影：{data["apiSeasonInfo"]["title"]}", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, $"电影：{data["apiSeasonInfo"]["title"]}", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -576,7 +624,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText($"发布公告：", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, $"发布公告：", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -623,7 +674,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText($"发布动态：", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, $"发布动态：", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -671,7 +725,10 @@ public static class DynamicPicGen
         float NowY1 = NowY;
         bitmap.Mutate(m =>
         {
-            m.DrawText($"关联视频：", FontText, ColorText, new PointF(Config.TextX, NowY1));
+            m.DrawText(new TextOptions(FontTextOpt)
+            {
+                Origin = new PointF(Config.TextX, NowY1)
+            }, $"关联视频：", ColorText);
         });
 
         NowY += Config.TextDeviation + 10;
@@ -706,7 +763,7 @@ public static class DynamicPicGen
         DrawStringes(temp, ref bitmap, ref NowY);
     }
 
-    private static void DrawImage(float NowY, ref Image<Rgba32> bitmap) 
+    private static void DrawImage(float NowY, ref Image<Rgba32> bitmap)
     {
         Image<Rgba32> bitmap1 = new(Config.Width, (int)NowY);
         var bitmap2 = bitmap;
@@ -722,14 +779,14 @@ public static class DynamicPicGen
     private static void DrawStringes(string draw, ref Image<Rgba32> bitmap, ref float NowY)
     {
         int count = 0;
-        string[] list = draw.Split("\n");
+        string[] list = draw.Split(Environment.NewLine);
         foreach (var item in list)
         {
             int a = item.Length / Config.TextLim;
             count += a == 0 ? 1 : a;
         }
         int AllLength = (count + 2 +
-            Tools.SubstringCount(draw, "\n")) * Config.TextDeviation + (int)NowY;
+            Tools.SubstringCount(draw, Environment.NewLine)) * Config.TextDeviation + (int)NowY;
 
         if (AllLength > bitmap.Height)
         {
@@ -768,7 +825,10 @@ public static class DynamicPicGen
                 float NowY1 = NowY;
                 bitmap.Mutate(m =>
                 {
-                    m.DrawText(temp1, FontText, ColorText, new PointF(Config.TextX, NowY1));
+                    m.DrawText(new TextOptions(FontTextOpt)
+                    {
+                        Origin = new PointF(Config.TextX, NowY1)
+                    }, temp1, ColorText);
                 });
                 NowY += Config.TextDeviation;
                 a++;

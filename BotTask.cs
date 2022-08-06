@@ -23,7 +23,7 @@ public static class BotTask
                 }
                 string temp1 = VideoPicGen.Gen(data1);
                 Program.Log($"已生成{temp1}");
-                Program.robot.SendGroupMessage(0, group, new() { temp1 });
+                Program.robot.SendGroupImageFile(0, group, temp1);
             }
             catch (Exception e)
             {

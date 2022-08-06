@@ -13,6 +13,7 @@ using System.Linq;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using static Net.Codecrete.QrCodeGenerator.QrSegment;
+using System.Collections.Generic;
 
 namespace BotBiliBili.PicGen;
 
@@ -32,6 +33,12 @@ public static class VideoPicGen
     private static Color Qback;
     private static Color Qpoint;
     private static VideoSave Config;
+
+    private static TextOptions FontNameOpt;
+    private static TextOptions FontUIDOpt;
+    private static TextOptions FontStateOpt;
+    private static TextOptions FontTitleOpt;
+    private static TextOptions FontInfoOpt;
     public static void Init()
     {
         if (!Directory.Exists(Program.RunLocal + "Video"))
@@ -46,11 +53,35 @@ public static class VideoPicGen
 
         var temp = SystemFonts.Families.Where(a => a.Name == Config.Font).FirstOrDefault();
 
+        var FontEmoji = SystemFonts.Families.Where(a => a.Name == Config.Font1).FirstOrDefault();
+
         FontName = temp.CreateFont(Config.NameSize, FontStyle.Regular);
         FontUID = temp.CreateFont(Config.UidSize, FontStyle.Regular);
         FontTitle = temp.CreateFont(Config.TitleSize, FontStyle.Regular);
         FontInfo = temp.CreateFont(Config.InfoSize, FontStyle.Regular);
         FontState = temp.CreateFont(Config.StateSize, FontStyle.Regular);
+
+        FontNameOpt = new(FontName)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontUIDOpt = new(FontUID)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontStateOpt = new(FontState)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontInfoOpt = new(FontInfo)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+        FontTitleOpt = new(FontTitle)
+        {
+            FallbackFontFamilies = new List<FontFamily>() { FontEmoji }
+        };
+
         Qback = Color.Parse(Config.QBack);
         Qpoint = Color.Parse(Config.QPoint);
     }
@@ -77,10 +108,14 @@ public static class VideoPicGen
         bitmap.Mutate(m =>
         {
             m.DrawImage(pic1, new Point((int)Config.HeadPic.X, (int)Config.HeadPic.Y), 1.0f);
-            m.DrawText(data["owner"]["name"].ToString(), FontName, ColorName, 
-                new PointF(Config.NamePos.X, Config.NamePos.Y));
-            m.DrawText("UID:" + data["owner"]["mid"].ToString(), FontUID, ColorUID, 
-                new PointF(Config.UidPos.X, Config.UidPos.Y));
+            m.DrawText(new TextOptions(FontNameOpt)
+            {
+                Origin = new PointF(Config.NamePos.X, Config.NamePos.Y)
+            }, data["owner"]["name"].ToString(), ColorName);
+            m.DrawText(new TextOptions(FontUIDOpt)
+            {
+                Origin = new PointF(Config.UidPos.X, Config.UidPos.Y)
+            }, $"UID:{data["owner"]["mid"]}",ColorUID);
             m.DrawImage(code1, new Point((int)Config.QPos.X, (int)Config.QPos.Y), 1.0f);
         });
 
@@ -117,10 +152,14 @@ public static class VideoPicGen
 
         bitmap.Mutate(m =>
         {
-            m.DrawText(temp1, FontTitle, ColorTitle,
-                new PointF(Config.TitlePos.X, Config.TitlePos.Y));
-            m.DrawText($"{temp}  观看:{data["stat"]["view"]}  点赞:{data["stat"]["like"]}", 
-                FontState, ColorState, new PointF(Config.StatePos.X, Config.StatePos.Y));
+            m.DrawText(new TextOptions(FontTitleOpt)
+            {
+                Origin = new PointF(Config.TitlePos.X, Config.TitlePos.Y)
+            }, temp1, ColorTitle);
+            m.DrawText(new TextOptions(FontStateOpt)
+            {
+                Origin = new PointF(Config.StatePos.X, Config.StatePos.Y)
+            }, $"{temp}  观看:{data["stat"]["view"]}  点赞:{data["stat"]["like"]}", ColorState);
             m.DrawImage(pic3,  new Point((int)Config.PicPos.X, (int)Config.PicPos.Y), 1.0f);
         });
 
@@ -166,7 +205,10 @@ public static class VideoPicGen
                 }
                 bitmap.Mutate(m =>
                 {
-                    m.DrawText(temp1, FontInfo, ColorInfo, new PointF(Config.InfoPos.X, NowY));
+                    m.DrawText(new TextOptions(FontInfoOpt)
+                    {
+                        Origin = new PointF(Config.InfoPos.X, NowY)
+                    }, temp1, ColorInfo);
                 });
                 NowY += Config.InfoDeviation;
                 a++;
@@ -180,11 +222,11 @@ public static class VideoPicGen
             DrawImage(NowY + Config.InfoDeviation, ref bitmap);
         }
 
-        temp = $"Video/{data["bvid"]}.png";
+        temp = $"Video/{data["bvid"]}.jpg";
 
-        bitmap.Save(temp, new PngEncoder()
+        bitmap.Save(temp, new JpegEncoder()
         { 
-            
+            Quality = 100
         });
         bitmap.Dispose();
         return Program.RunLocal + temp;
